@@ -1,24 +1,51 @@
-
 import { notFound } from 'next/navigation';
 import { Product } from '@/types';
 
-async function getProduct(id: string): Promise<Product | null> {
+// Mock data for products
+const mockProducts: Product[] = [
+  {
+    id: '1',
+    slug: 'premium-hair-oil',
+    name: 'Premium Hair Oil',
+    price: 24.99,
+    image: '/products/hair-oil.jpg',
+    description: 'Nourishing oil for all hair types',
+    rating: 4.8,
+    reviews: 128,
+    stock: 50,
+    isNew: true,
+    discount: 10,
+    category: 'hair-care',
+    inStock: true,
+    sku: 'PROD001',
+    brand: "Loc'd Essence",
+    details: 'Enriched with argan oil and vitamin E to nourish and strengthen hair. Suitable for all hair types. Free from parabens and sulfates.',
+  },
+  {
+    id: '2',
+    slug: 'moisturizing-shampoo',
+    name: 'Moisturizing Shampoo',
+    price: 19.99,
+    image: '/products/shampoo.jpg',
+    description: 'Gentle cleansing for dry hair',
+    rating: 4.5,
+    reviews: 95,
+    stock: 30,
+    isNew: false,
+    discount: 0,
+    category: 'hair-care',
+    inStock: true,
+    sku: 'PROD002',
+    brand: "Loc'd Essence",
+    details: 'Hydrating formula with coconut oil and shea butter. Sulfate-free and color-safe.',
+  },
+];
+
+async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
-    // Replace with your actual data fetching logic
-    const res = await fetch(`https://your-api.com/products/${id}`);
-
-    if (!res.ok) {
-      return null;
-    }
-
-    const product = await res.json();
-
-    // Validate the product matches your type
-    if (!product?.id || !product?.slug) {
-      return null;
-    }
-
-    return product as Product;
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const product = mockProducts.find(p => p.slug === slug);
+    return product || null;
   } catch (error) {
     console.error('Error fetching product:', error);
     return null;
@@ -28,12 +55,12 @@ async function getProduct(id: string): Promise<Product | null> {
 export default async function ProductPage({
   params
 }: {
-  params: { id: string }
+  params: { slug: string }
 }) {
-  const product = await getProduct(params.id);
+  const product = await getProductBySlug(params.slug);
 
   if (!product) {
-    notFound(); // This will show the 404 page
+    notFound();
   }
 
   return (
