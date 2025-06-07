@@ -1,7 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import { Product, Category } from '../types';
+import { useRouter } from 'next/navigation';
+import { Button } from '../components/ui/Button';
+import styles from '../components/homepage.module.css';
 
 export default function Home() {
   // Mock data - replace with your actual data fetching
@@ -148,42 +153,51 @@ export default function Home() {
     }
   ];
 
+  const router = useRouter();
+
+  const handleProductsClick = () => {
+    router.push('/products');
+  };
+
+  const handleLoginClick = () => {
+    router.push('/auth/login');
+  };
+
   return (
-    <div className="homepage">
+    <div className={styles.container}>
       {/* Hero Section */}
-      <header className="relative h-[90vh] min-h-[600px] bg-[url('https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center flex items-center justify-center text-white text-center">
-        <div className="absolute inset-0 bg-[rgba(61,0,0,0.6)]"></div>
-        <div className="relative z-10 animate-fadeInUp">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-shadow-lg">Welcome to Loc'd Essence</h1>
-          <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto text-shadow">
+      <header className={styles.hero}>
+        <div className={styles.heroOverlay}></div>
+        <div className={styles.heroContent}>
+          <h1 className={styles.heroTitle}>Welcome to Loc'd Essence</h1>
+          <p className={styles.heroSubtitle}>
             Discover the best products at unbeatable prices!
           </p>
-          <Link 
-            href="/products"
-            className="inline-flex items-center justify-center px-12 py-4 bg-accent text-white font-semibold rounded-full shadow-lg hover:bg-accent-dark transition-all hover:-translate-y-1 hover:shadow-xl"
+          <Button
+            onClick={handleProductsClick}
+            className={styles.shopButton}
           >
-            Shop Now
-            <span className="ml-2">→</span>
-          </Link>
+            <span className={styles.shopButtonText}>Shop Now</span>
+          </Button>
         </div>
       </header>
 
       {/* Scrolling Hero Banner */}
-      <section className="relative h-[30vh] min-h-[400px] overflow-hidden">
-        <div className="flex h-full w-[700%] animate-scrollLeft">
+      <section className={styles.scrollingHero}>
+        <div className={styles.scrollingHeroContainer}>
           {scrollingHeroItems.map((item, index) => (
-            <div key={index} className="w-full h-full flex-shrink-0 relative">
-              <div 
-                className="w-full h-full bg-cover bg-center flex items-center justify-center"
+            <div key={index} className={styles.scrollingHeroItem}>
+              <div
+                className={styles.scrollingHeroImage}
                 style={{ backgroundImage: `url(${item.image})` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-[rgba(62,39,35,0.7)] to-[rgba(109,76,65,0.5)]"></div>
-                <div className="relative z-10 text-center text-white px-4 max-w-4xl">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-shadow">{item.title}</h2>
-                  <p className="text-xl mb-6 text-shadow">{item.subtitle}</p>
-                  <button className="bg-accent text-white px-8 py-3 rounded-full font-medium hover:bg-accent-dark transition">
-                    {item.buttonText}
-                  </button>
+                <div className={styles.scrollingHeroOverlay}></div>
+                <div className={styles.scrollingHeroContent}>
+                  <h2 className={styles.heroTitle}>{item.title}</h2>
+                  <p className={styles.heroSubtitle}>{item.subtitle}</p>
+                  <Button className={styles.shopButton}>
+                    <span className={styles.shopButtonText}>{item.buttonText}</span>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -193,13 +207,11 @@ export default function Home() {
 
       {/* Featured Products */}
       <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold relative pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-20 after:h-1 after:bg-accent after:rounded">
-              Our Bestsellers
-            </h2>
+        <div className={styles.container}>
+          <div className={styles.sectionHeading}>
+            <h2>Our Bestsellers</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className={styles.productGrid}>
             {featuredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -209,15 +221,13 @@ export default function Home() {
 
       {/* Categories */}
       <section className="py-16 bg-[rgba(61,0,0,0.6)]">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold relative pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-20 after:h-1 after:bg-accent after:rounded text-white">
-              Categories
-            </h2>
+        <div className={styles.container}>
+          <div className={styles.sectionHeading}>
+            <h2 className="text-white">Categories</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className={styles.productGrid}>
             {categories.map(category => (
-              <CategoryCard product={category} key={category.id} {...category} />
+              <CategoryCard key={category.id} product={category} {...category} />
             ))}
           </div>
         </div>
@@ -225,23 +235,25 @@ export default function Home() {
 
       {/* Testimonials */}
       <section className="py-16 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-semibold mb-12">What Customers Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className={styles.container}>
+          <div className={styles.sectionHeading}>
+            <h2>What Customers Say</h2>
+          </div>
+          <div className={styles.productGrid}>
             {testimonials.map(({ name, location, text, avatar }, idx) => (
-              <div key={idx} className="bg-white rounded-lg p-6 shadow-lg">
-                <div className="flex items-center mb-4">
-                  <img 
-                    src={avatar} 
-                    alt={name} 
-                    className="w-16 h-16 rounded-full object-cover"
+              <div key={idx} className={styles.testimonialCard}>
+                <div className={styles.testimonialHeader}>
+                  <img
+                    src={avatar}
+                    alt={name}
+                    className={styles.testimonialAvatar}
                   />
-                  <div className="ml-4">
-                    <p className="font-semibold">{name}</p>
-                    <p className="text-sm text-gray-500">{location}</p>
+                  <div className={styles.testimonialAuthor}>
+                    <p className={styles.testimonialAuthorName}>{name}</p>
+                    <p className={styles.testimonialAuthorLocation}>{location}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">&quot;{text}&quot;</p>
+                <p className={styles.testimonialText}>&quot;{text}&quot;</p>
               </div>
             ))}
           </div>
@@ -249,10 +261,10 @@ export default function Home() {
       </section>
 
       {/* Scrolling Text Banner */}
-      <section className="overflow-hidden whitespace-nowrap bg-accent text-white py-4 text-lg font-semibold tracking-wide">
-        <div className="inline-block animate-scrollRight">
+      <section className={styles.scrollingBanner}>
+        <div className={styles.scrollingContent}>
           {scrollingItems.map((item, index) => (
-            <span key={index} className="mx-12">
+            <span key={index} className={styles.scrollingItem}>
               {item.text}
             </span>
           ))}
@@ -260,12 +272,14 @@ export default function Home() {
       </section>
 
       {/* Hair Care Tips */}
-      <section className="py-16 container mx-auto px-4">
-        <h2 className="text-center text-3xl font-bold mb-12">Natural Hair Care Facts & Tips</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className={`py-16 ${styles.container}`}>
+        <div className={styles.sectionHeading}>
+          <h2>Natural Hair Care Facts & Tips</h2>
+        </div>
+        <div className={styles.productGrid}>
           {hairTips.map(({ title, fact }, idx) => (
-            <article key={idx} className="p-6 border rounded-lg shadow-sm hover:shadow-lg transition">
-              <h3 className="text-xl font-semibold mb-4">{title}</h3>
+            <article key={idx} className={styles.hairTipCard}>
+              <h3 className={styles.hairTipTitle}>{title}</h3>
               <p>{fact}</p>
             </article>
           ))}
@@ -273,25 +287,27 @@ export default function Home() {
       </section>
 
       {/* Meet the Creator */}
-      <section className="bg-gray-900 text-white py-20">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
-          <div className="md:w-1/2">
-            <h2 className="text-4xl font-bold mb-6">Meet the Creator</h2>
-            <p className="mb-6 max-w-lg leading-relaxed">
-              Hello! I'm the founder of Loc'd Essence, passionate about empowering natural hair care in Africa. Thank you for supporting our small business!
+      <section className={styles.creatorSection}>
+        <div className={`${styles.container} ${styles.creatorContainer}`}>
+          <div className={styles.creatorContent}>
+            <h2 className={styles.creatorTitle}>Meet the Creator</h2>
+            <p className={styles.creatorDescription}>
+              A Message From Our Founder
+
+              "Welcome to Loc'd Essence – where crowns are nurtured, beauty is celebrated, and community thrives.
+              WRITE MESSAGE
+
+              This isn’t just commerce – it’s a reclamation. Every purchase supports Black artisans across Africa and its diaspora.
             </p>
-            <Link
-              href="/about"
-              className="inline-block px-8 py-3 bg-accent rounded-full font-semibold hover:bg-accent-dark transition"
-            >
-              Learn More
-            </Link>
+            <Button className={styles.shopButton} onClick={handleLoginClick}>
+              <span className={styles.shopButtonText}>JOIN US</span>
+            </Button>
           </div>
-          <div className="md:w-1/2 max-w-md">
-            <img 
-              src="/creator.png" 
-              alt="Founder of Locd Essence" 
-              className="w-full h-auto object-cover rounded-lg transition-transform hover:scale-105"
+          <div className={styles.creatorImageContainer}>
+            <img
+              src="/creator.png"
+              alt="Founder of Locd Essence"
+              className={styles.creatorImage}
             />
           </div>
         </div>

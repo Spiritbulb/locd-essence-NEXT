@@ -1,0 +1,344 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 20px rgba(139, 109, 93, 0.1);
+    z-index: 50;
+    border-bottom: 1px solid rgba(201, 165, 149, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.navbar.transparent {
+    background: transparent;
+    box-shadow: none;
+    border-bottom-color: transparent;
+    backdrop-filter: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.navContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: translateY(-1px);
+}
+
+.logoIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, #d4a574 0%, #e8b4cb 100%);
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+    transition: all 0.3s ease;
+}
+
+.logo:hover .logoIcon {
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+    transform: scale(1.05);
+}
+
+.logoText {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #a67c5a 0%, #d4779b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.desktopNav {
+    display: none;
+    align-items: center;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .desktopNav {
+        display: flex;
+    }
+}
+
+.navLink {
+    color: #8b6d5d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+.navLink:hover {
+    color: #6b4e3d;
+    background-color: rgba(212, 165, 116, 0.1);
+    transform: translateY(-1px);
+}
+
+.cartButton {
+    position: relative;
+    padding: 0.5rem;
+    color: #8b6d5d;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+}
+
+.cartButton:hover {
+    color: #6b4e3d;
+    background-color: rgba(212, 165, 116, 0.1);
+    transform: translateY(-1px);
+}
+
+.cartBadge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    background: linear-gradient(135deg, #d4a574 0%, #e8b4cb 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 50%;
+    height: 1.25rem;
+    width: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(212, 165, 116, 0.4);
+}
+
+.userSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(245, 240, 235, 0.8);
+    border-radius: 2rem;
+    border: 1px solid rgba(201, 165, 149, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.userAvatar {
+    border-radius: 50%;
+    border: 2px solid rgba(212, 165, 116, 0.5);
+}
+
+.userName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #8b6d5d;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logoutButton {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(139, 109, 93, 0.3);
+    color: #8b6d5d;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.logoutButton:hover {
+    background: rgba(212, 165, 116, 0.1);
+    color: #6b4e3d;
+    border-color: rgba(139, 109, 93, 0.5);
+    transform: translateY(-1px);
+}
+
+.loginButton {
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #d4a574 0%, #e8b4cb 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+.loginButton:hover {
+    background: linear-gradient(135deg, #c19660 0%, #d9a2bb 100%);
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+    transform: translateY(-2px);
+}
+
+.mobileMenuToggle {
+    display: block;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #8b6d5d;
+}
+
+@media (min-width: 768px) {
+    .mobileMenuToggle {
+        display: none;
+    }
+}
+
+.mobileMenuToggle:hover {
+    background-color: rgba(212, 165, 116, 0.1);
+}
+
+.mobileMenu {
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.mobileMenuOpen {
+    max-height: 24rem;
+    opacity: 1;
+    margin-top: 1rem;
+}
+
+.mobileMenuClosed {
+    max-height: 0;
+    opacity: 0;
+}
+
+@media (min-width: 768px) {
+    .mobileMenu {
+        display: none;
+    }
+}
+
+.mobileMenuContent {
+    background: rgba(245, 240, 235, 0.95);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(201, 165, 149, 0.3);
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(139, 109, 93, 0.1);
+}
+
+.mobileNavLink {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #8b6d5d;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    margin-bottom: 0.25rem;
+}
+
+.mobileNavLink:hover {
+    color: #6b4e3d;
+    background-color: rgba(212, 165, 116, 0.15);
+}
+
+.mobileCartButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: #8b6d5d;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    margin-bottom: 0.25rem;
+}
+
+.mobileCartButton:hover {
+    color: #6b4e3d;
+    background-color: rgba(212, 165, 116, 0.15);
+}
+
+.mobileUserSection {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(201, 165, 149, 0.3);
+    margin-top: 0.75rem;
+}
+
+.mobileUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.mobileUserAvatar {
+    border-radius: 50%;
+    border: 2px solid rgba(212, 165, 116, 0.5);
+}
+
+.mobileUserName {
+    font-weight: 500;
+    color: #8b6d5d;
+}
+
+.mobileLogoutButton {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(212, 165, 116, 0.2);
+    color: #8b6d5d;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.mobileLogoutButton:hover {
+    background: rgba(212, 165, 116, 0.3);
+    color: #6b4e3d;
+}
+
+.mobileLoginButton {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #d4a574 0%, #e8b4cb 100%);
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.mobileLoginButton:hover {
+    background: linear-gradient(135deg, #c19660 0%, #d9a2bb 100%);
+}

@@ -1,0 +1,124 @@
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #FFF5F5;
+    padding: 20px;
+}
+
+.loginCard {
+    background-color: #FFF9FB;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(203, 153, 153, 0.2);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #F8D7DA;
+}
+
+.title {
+    color: #A56B6B;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    color: #8B5A5A;
+    /* Medium brown */
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input {
+    padding: 12px 15px;
+    border: 1px solid #E8C4C4;
+    /* Light brown-pink */
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #FFFDFD;
+    /* Off-white */
+    color: #5A3E3E;
+    /* Dark brown */
+    transition: border-color 0.3s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #D4A5A5;
+    /* Medium pink-brown */
+}
+
+.forgotLink {
+    text-align: right;
+    margin-top: -10px;
+}
+
+.link {
+    color: #C99797;
+    /* Light brown */
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.link:hover {
+    color: #A56B6B;
+    /* Muted brown-pink */
+}
+
+.submitButton {
+    background-color: #D4A5A5;
+    /* Medium pink-brown */
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.submitButton:hover {
+    background-color: #C99797;
+    /* Slightly darker pink-brown */
+}
+
+.toggleText {
+    text-align: center;
+    margin-top: 20px;
+    color: #8B5A5A;
+    /* Medium brown */
+    font-size: 14px;
+}
+
+.toggleButton {
+    background: none;
+    border: none;
+    color: #D4A5A5;
+    /* Medium pink-brown */
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+.toggleButton:hover {
+    text-decoration: underline;
+}

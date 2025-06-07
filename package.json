@@ -10,6 +10,12 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.6.1",
+    "@uppy/core": "^4.4.6",
+    "@uppy/dashboard": "^4.3.4",
+    "@uppy/react": "^4.3.0",
+    "@uppy/xhr-upload": "^4.3.3",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.513.0",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
