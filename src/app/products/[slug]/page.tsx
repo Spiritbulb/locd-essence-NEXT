@@ -41,22 +41,23 @@ const mockProducts: Product[] = [
   },
 ];
 
+interface ProductPageProps {
+  params: {
+    slug: string;
+  };
+}
+
 async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
     await new Promise(resolve => setTimeout(resolve, 100));
-    const product = mockProducts.find(p => p.slug === slug);
-    return product || null;
+    return mockProducts.find(p => p.slug === slug) || null;
   } catch (error) {
     console.error('Error fetching product:', error);
     return null;
   }
 }
 
-export default async function ProductPage({
-  params
-}: {
-  params: { slug: string }
-}) {
+export default async function ProductPage({ params }: ProductPageProps) {
   const product = await getProductBySlug(params.slug);
 
   if (!product) {

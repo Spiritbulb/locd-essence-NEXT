@@ -49,9 +49,9 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-8 margin-16 padding-16">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Our Products</h1>
+        <h1 className="text-3xl font-bold margin-16 padding-16">Our Products</h1>
         <div className="text-sm text-gray-500">
           Showing {products.length} products
         </div>

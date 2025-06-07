@@ -7,6 +7,7 @@ import { Product, Category } from '../types';
 import { useRouter } from 'next/navigation';
 import { Button } from '../components/ui/Button';
 import styles from '../components/homepage.module.css';
+import FloatingMenu from '@/components/floatingbutton';
 
 export default function Home() {
   // Mock data - replace with your actual data fetching
@@ -312,6 +313,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <FloatingMenu />
     </div>
   );
 }
