@@ -7,6 +7,7 @@ type Product = {
   id: string | number;
   name: string;
   image: string;
+  slug: string;
   price: number | string;
 };
 
@@ -20,7 +21,7 @@ export default function ProductCard({ product }: Props) {
   const viewProductDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      router.push(`/products/${product.id}`);
+      router.push(`/products/${product.slug}`);
     } catch (error) {
       console.error('Routing error:', error);
       router.push('/');
