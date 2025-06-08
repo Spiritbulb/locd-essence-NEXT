@@ -6,11 +6,15 @@ import Footer from '../components/Footer'
 import { CartProvider } from '../context/CartContext'
 import { AuthProvider } from '../context/AuthContext'
 
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Your E-Commerce Store',
-  description: 'Modern e-commerce platform built with Next.js',
+  title: 'Loc\'d Essence',
+  description: 'A place for all your hair care needs',
+  icons: {
+    icon: '/creator.png',
+  },
 }
 
 export default function RootLayout({
@@ -20,11 +24,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+      <body className={`${inter.className} flex flex-col w-full min-h-screen`}>
         <AuthProvider>
           <CartProvider>
             <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-8">
+            <main className="w-full mx-auto py-8">
               {children}
             </main>
             <Footer />

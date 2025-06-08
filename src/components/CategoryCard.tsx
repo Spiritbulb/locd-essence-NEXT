@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import styles from './CategoryCard.module.css';
 import { Category } from '@/types';
+import styles from './CategoryCard.module.css';
+
 
 interface CategoryCardProps {
   product: Category;
