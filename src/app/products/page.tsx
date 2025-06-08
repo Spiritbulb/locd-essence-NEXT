@@ -41,7 +41,7 @@ async function getProducts(): Promise<Product[]> {
       brand: "Loc'd Essence",
       details: 'Hydrating formula with coconut oil and shea butter. Sulfate-free and color-safe.',
     },
-    // Add more products...
+    // Add more products as needed
   ];
 }
 
@@ -49,15 +49,15 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
-    <main className="container mx-auto px-4 py-8 margin-16 padding-16">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold margin-16 padding-16">Our Products</h1>
+    <main className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <h1 className="text-3xl font-bold text-[#a38776]">Our Products</h1>
         <div className="text-sm text-gray-500">
-          Showing {products.length} products
+          Showing {products.length} {products.length === 1 ? 'product' : 'products'}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
 import { useRouter } from 'next/navigation';
-import { CSSProperties } from 'react';
+import Image from 'next/image';
 
 type Product = {
   id: string | number;
@@ -9,81 +9,81 @@ type Product = {
   image: string;
   slug: string;
   price: number | string;
+  discount?: number;
+  isNew?: boolean;
 };
 
-type Props = {
-  product: Product;
-};
-
-export default function ProductCard({ product }: Props) {
+export default function ProductCard({ product }: { product: Product }) {
   const router = useRouter();
 
   const viewProductDetails = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      router.push(`/products/${product.slug}`);
-    } catch (error) {
-      console.error('Routing error:', error);
-      router.push('/');
-    }
+    e.preventDefault();
+    router.push(`/products/${product.slug}`);
   };
 
-  // Define reusable style variables
-  const styles = {
-    card: {
-      '--card-padding': '1.25rem',
-      '--transition-duration': '300ms',
-      '--transition-easing': 'cubic-bezier(0.4, 0, 0.2, 1)',
-      '--primary-color': '#a38776',
-      '--primary-hover': '#8a6e5d',
-    } as CSSProperties,
-    gradientOverlay: {
-      background: 'linear-gradient(to top right, rgba(226, 196, 174, 0.6), rgba(255, 230, 232, 0.4), rgba(255, 255, 255, 0.2))',
-    } as CSSProperties,
+  const calculateDiscountedPrice = () => {
+    if (product.discount && product.discount > 0) {
+      const originalPrice = Number(product.price);
+      const discountAmount = originalPrice * (product.discount / 100);
+      return (originalPrice - discountAmount).toFixed(2);
+    }
+    return null;
   };
+
+  const discountedPrice = calculateDiscountedPrice();
 
   return (
     <article
-      className="group relative min-w-[220px] h-80 bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-2 hover:shadow-lg"
-      style={styles.card}
-      aria-labelledby={`category-title-${product.id}`}
+      className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-lg"
+      onClick={viewProductDetails}
     >
-      {/* Visual overlay effects */}
-      <div className="absolute inset-0 z-10">
-        <div
-          className="absolute inset-0 opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100"
-          style={styles.gradientOverlay}
-        ></div>
-        <div className="absolute inset-0 bg-black/5 opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:opacity-100"></div>
+      {/* Badges */}
+      <div className="absolute top-3 left-3 z-10 flex gap-2">
+        {product.isNew && (
+          <span className="bg-[#a38776] text-white text-xs px-2 py-1 rounded-full">
+            New
+          </span>
+        )}
+        {product.discount && product.discount > 0 && (
+          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+            -{product.discount}%
+          </span>
+        )}
       </div>
 
-      {/* Category image */}
-      <div className="relative w-full h-72 overflow-hidden rounded-t-lg">
-        <img
+      {/* Product Image */}
+      <div className="relative w-full aspect-square overflow-hidden">
+        <Image
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:brightness-105"
-          loading="lazy"
-          width={280}
-          height={280}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
       </div>
 
-      {/* Content section */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col items-center z-20">
-        <h3
-          id={`category-title-${product.id}`}
-          className="text-lg font-semibold text-[#a38776] mb-3 text-center w-full truncate"
-        >
+      {/* Product Info */}
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-[#a38776] mb-1 truncate">
           {product.name}
         </h3>
-        <p className="text-base text-gray-700 my-2 font-medium">Ksh{product.price}</p>
+
+        <div className="flex items-center gap-2">
+          {discountedPrice ? (
+            <>
+              <span className="text-gray-900 font-bold">Ksh{discountedPrice}</span>
+              <span className="text-gray-500 text-sm line-through">Ksh{product.price}</span>
+            </>
+          ) : (
+            <span className="text-gray-900 font-bold">Ksh{product.price}</span>
+          )}
+        </div>
+
         <button
           onClick={viewProductDetails}
-          className="px-7 py-2 bg-[#a38776] text-white rounded-full text-sm font-medium shadow-sm transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[#8a6e5d] hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5 border-none cursor-pointer"
-          type="button"
+          className="mt-3 w-full py-2 bg-[#a38776] text-white rounded-md text-sm font-medium transition-colors duration-300 hover:bg-[#8a6e5d]"
         >
-          <span>View Details</span>
+          View Details
         </button>
       </div>
     </article>
