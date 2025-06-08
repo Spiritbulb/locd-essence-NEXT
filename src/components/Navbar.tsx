@@ -4,9 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Button } from './ui/Button';
 import { ShoppingCart, Menu, X, User } from 'lucide-react';
-import styles from './navbar.module.css';
 
 interface NavbarProps {
   cartItemsCount?: number;
@@ -51,30 +49,44 @@ export default function Navbar({ cartItemsCount = 0 }: NavbarProps) {
   };
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.transparent : ''}`}>
-      <div className={styles.container}>
-        <div className={styles.navContent}>
+    <nav className={`fixed top-0 left-0 right-0 bg-white shadow-md z-50 border-b border-[rgba(201,165,149,0.2)] backdrop-blur-xl transition-all duration-300 ease-in-out ${
+      isScrolled ? 'bg-transparent shadow-none border-transparent backdrop-blur-none' : ''
+    }`}>
+      <div className="max-w-[1200px] mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
           {/* Logo */}
-          <Button onClick={handleHomeClick} className={styles.logo}>
-            <span className={styles.logoText}>
+          <button
+            onClick={handleHomeClick}
+            className="flex items-center transition-all duration-300 ease-in-out hover:-translate-y-[1px]"
+          >
+            <span className="text-2xl font-bold bg-gradient-to-br from-[#a67c5a] to-[#d4779b] bg-clip-text text-transparent">
               Loc'd Essence
             </span>
-          </Button>
+          </button>
 
           {/* Desktop Navigation */}
-          <div className={styles.desktopNav}>
-            <Link href="/" className={styles.navLink}>
+          <div className="hidden md:flex items-center gap-8">
+            <Link
+              href="/"
+              className="text-[#8b6d5d] hover:text-[#6b4e3d] transition-all duration-300 ease-in-out font-medium px-4 py-2 rounded-lg hover:bg-[rgba(212,165,116,0.1)] hover:-translate-y-[1px] relative"
+            >
               Home
             </Link>
-            <Link href="/products" className={styles.navLink}>
+            <Link
+              href="/products"
+              className="text-[#8b6d5d] hover:text-[#6b4e3d] transition-all duration-300 ease-in-out font-medium px-4 py-2 rounded-lg hover:bg-[rgba(212,165,116,0.1)] hover:-translate-y-[1px] relative"
+            >
               Products
             </Link>
 
             {/* Cart Button */}
-            <button onClick={handleCartClick} className={styles.cartButton}>
+            <button
+              onClick={handleCartClick}
+              className="text-[#8b6d5d] hover:text-[#6b4e3d] transition-all duration-300 ease-in-out p-2 rounded-lg hover:bg-[rgba(212,165,116,0.1)] hover:-translate-y-[1px] relative"
+            >
               <ShoppingCart size={24} />
               {cartItemsCount > 0 && (
-                <span className={styles.cartBadge}>
+                <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#d4a574] to-[#e8b4cb] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-md">
                   {cartItemsCount}
                 </span>
               )}
@@ -82,25 +94,31 @@ export default function Navbar({ cartItemsCount = 0 }: NavbarProps) {
 
             {/* User Section */}
             {!isLoading && user ? (
-              <div className={styles.userSection}>
-                <div className={styles.userInfo}>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 px-3 py-2 bg-[rgba(245,240,235,0.8)] rounded-full border border-[rgba(201,165,149,0.3)] backdrop-blur-sm">
                   <Image
                     src={user.picture || '/default-avatar.png'}
                     alt={user.name || 'User'}
                     width={32}
                     height={32}
-                    className={styles.userAvatar}
+                    className="rounded-full border-2 border-[rgba(212,165,116,0.5)]"
                   />
-                  <span className={styles.userName}>
+                  <span className="text-sm font-medium text-[#8b6d5d] max-w-[120px] truncate">
                     {user.name}
                   </span>
                 </div>
-                <button onClick={logout} className={styles.logoutButton}>
+                <button
+                  onClick={logout}
+                  className="text-sm px-4 py-2 border border-[rgba(139,109,93,0.3)] text-[#8b6d5d] bg-[rgba(255,255,255,0.5)] rounded-lg transition-all duration-300 ease-in-out hover:bg-[rgba(212,165,116,0.1)] hover:text-[#6b4e3d] hover:border-[rgba(139,109,93,0.5)] hover:-translate-y-[1px] backdrop-blur-sm"
+                >
                   Logout
                 </button>
               </div>
             ) : (
-              <Link href="/auth/login" className={styles.loginButton}>
+              <Link
+                href="/auth/login"
+                className="px-6 py-2 bg-gradient-to-br from-[#d4a574] to-[#e8b4cb] text-white rounded-full transition-all duration-300 ease-in-out font-medium shadow-lg hover:from-[#c19660] hover:to-[#d9a2bb] hover:shadow-xl hover:-translate-y-[2px]"
+              >
                 Login
               </Link>
             )}
@@ -110,30 +128,41 @@ export default function Navbar({ cartItemsCount = 0 }: NavbarProps) {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={styles.mobileMenuToggle}
+            className="md:hidden p-2 rounded-lg text-[#8b6d5d] transition-all duration-300 ease-in-out hover:bg-[rgba(212,165,116,0.1)]"
             aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
           >
-            {isMobileMenuOpen ? (
-              <X size={24} />
-            ) : (
-              <Menu size={24} />
-            )}
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed}`}>
-          <div className={styles.mobileMenuContent}>
-            <Link href="/" onClick={closeMenus} className={styles.mobileNavLink}>
+        <div
+          className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+            isMobileMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="bg-[rgba(245,240,235,0.95)] rounded-xl border border-[rgba(201,165,149,0.3)] p-4 backdrop-blur-lg shadow-lg">
+            <Link
+              href="/"
+              onClick={closeMenus}
+              className="block px-4 py-3 text-[#8b6d5d] rounded-lg transition-all duration-300 ease-in-out hover:text-[#6b4e3d] hover:bg-[rgba(212,165,116,0.15)] mb-1"
+            >
               Home
             </Link>
-            <Link href="/products" onClick={closeMenus} className={styles.mobileNavLink}>
+            <Link
+              href="/products"
+              onClick={closeMenus}
+              className="block px-4 py-3 text-[#8b6d5d] rounded-lg transition-all duration-300 ease-in-out hover:text-[#6b4e3d] hover:bg-[rgba(212,165,116,0.15)] mb-1"
+            >
               Products
             </Link>
-            <button onClick={handleCartClick} className={styles.mobileCartButton}>
+            <button
+              onClick={handleCartClick}
+              className="w-full flex items-center justify-between px-4 py-3 text-[#8b6d5d] rounded-lg transition-all duration-300 ease-in-out hover:text-[#6b4e3d] hover:bg-[rgba(212,165,116,0.15)] mb-1"
+            >
               <span>Cart</span>
               {cartItemsCount > 0 && (
-                <span className={styles.cartBadge}>
+                <span className="bg-gradient-to-br from-[#d4a574] to-[#e8b4cb] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-md">
                   {cartItemsCount}
                 </span>
               )}
@@ -141,24 +170,31 @@ export default function Navbar({ cartItemsCount = 0 }: NavbarProps) {
 
             {/* Mobile User Section */}
             {!isLoading && user ? (
-              <div className={styles.mobileUserSection}>
-                <div className={styles.mobileUserInfo}>
+              <div className="pt-4 border-t border-[rgba(201,165,149,0.3)] mt-3">
+                <div className="flex items-center gap-3 px-4 py-2 mb-3">
                   <Image
                     src={user.picture || '/default-avatar.png'}
                     alt={user.name || 'User'}
                     width={40}
                     height={40}
-                    className={styles.mobileUserAvatar}
+                    className="rounded-full border-2 border-[rgba(212,165,116,0.5)]"
                   />
-                  <span className={styles.mobileUserName}>{user.name}</span>
+                  <span className="font-medium text-[#8b6d5d]">{user.name}</span>
                 </div>
-                <button onClick={logout} className={styles.mobileLogoutButton}>
+                <button
+                  onClick={logout}
+                  className="w-full px-3 py-3 bg-[rgba(212,165,116,0.2)] text-[#8b6d5d] rounded-lg transition-all duration-300 ease-in-out font-medium hover:bg-[rgba(212,165,116,0.3)] hover:text-[#6b4e3d]"
+                >
                   Logout
                 </button>
               </div>
             ) : (
-              <div className={styles.mobileUserSection}>
-                <Link href="/api/auth/login" onClick={closeMenus} className={styles.mobileLoginButton}>
+              <div className="pt-4 border-t border-[rgba(201,165,149,0.3)] mt-3">
+                <Link
+                  href="/api/auth/login"
+                  onClick={closeMenus}
+                  className="block w-full px-3 py-3 bg-gradient-to-br from-[#d4a574] to-[#e8b4cb] text-white rounded-lg transition-all duration-300 ease-in-out font-medium text-center hover:from-[#c19660] hover:to-[#d9a2bb]"
+                >
                   Login
                 </Link>
               </div>
