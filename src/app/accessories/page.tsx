@@ -27,7 +27,7 @@ const AccessoriesPage = () => {
     {
       id: 1,
       name: 'Gold Hair Cuffs',
-      image: '/images/gold-cuffs.jpg',
+      image: '/gold-cuffs.jpg',
       slug: 'gold-hair-cuffs',
       price: 24.99,
       isNew: true,
@@ -39,7 +39,7 @@ const AccessoriesPage = () => {
     {
       id: 2,
       name: 'Bamboo Hair Clips',
-      image: '/images/bamboo-clips.jpg',
+      image: '/bamboo-clips.jpg',
       slug: 'bamboo-hair-clips',
       price: 12.99,
       rating: 4.5,
