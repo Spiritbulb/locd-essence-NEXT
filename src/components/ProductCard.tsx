@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Heart, ShoppingBag, Star } from 'lucide-react';
+import { useState } from 'react';
 
 type Product = {
   id: string | number;
@@ -11,81 +13,46 @@ type Product = {
   price: number | string;
   discount?: number;
   isNew?: boolean;
+  rating: number;
+  stock: number;
+  description: string;
 };
 
 export default function ProductCard({ product }: { product: Product }) {
-  const router = useRouter();
-
-  const viewProductDetails = (e: React.MouseEvent) => {
-    e.preventDefault();
-    router.push(`/products/${product.slug}`);
-  };
-
-  const calculateDiscountedPrice = () => {
-    if (product.discount && product.discount > 0) {
-      const originalPrice = Number(product.price);
-      const discountAmount = originalPrice * (product.discount / 100);
-      return (originalPrice - discountAmount).toFixed(2);
-    }
-    return null;
-  };
-
-  const discountedPrice = calculateDiscountedPrice();
-
   return (
-    <article
-      className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-lg"
-      onClick={viewProductDetails}
-    >
-      {/* Badges */}
-      <div className="absolute top-2 left-2 z-10 flex gap-1">
-        {product.isNew && (
-          <span className="bg-[#a38776] text-white text-[10px] px-1.5 py-0.5 rounded-full">
-            New
-          </span>
-        )}
-        {product.discount && product.discount > 0 && (
-          <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-            -{product.discount}%
-          </span>
-        )}
-      </div>
-
-      {/* Product Image */}
-      <div className="relative w-full aspect-[3/4] overflow-hidden">
-        <Image
+    <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100">
+      <div className="relative overflow-hidden">
+        <img
           src={product.image}
           alt={product.name}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
         />
-      </div>
-
-      {/* Product Info - Compact layout */}
-      <div className="p-3">
-        <h3 className="text-sm font-medium text-[#a38776] mb-1 line-clamp-2 h-10">
-          {product.name}
-        </h3>
-
-        <div className="flex items-center gap-1.5">
-          {discountedPrice ? (
-            <>
-              <span className="text-gray-900 font-semibold text-sm">Ksh{discountedPrice}</span>
-              <span className="text-gray-500 text-xs line-through">Ksh{product.price}</span>
-            </>
-          ) : (
-            <span className="text-gray-900 font-semibold text-sm">Ksh{product.price}</span>
-          )}
-        </div>
-
-        <button
-          onClick={viewProductDetails}
-          className="mt-2 w-full py-1.5 bg-[#a38776] text-white rounded text-xs font-medium hover:bg-[#8a6e5d]"
-        >
-          View Details
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors">
+          <Heart className="w-5 h-5 text-[#8a6e5d]" />
         </button>
       </div>
-    </article >
-  );
-}
+      <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+        <button className="w-full py-2 px-4 bg-[#8a6e5d] text-white rounded-full font-medium hover:bg-[#7e4507] transition-colors flex items-center justify-center gap-2">
+          <ShoppingBag className="w-4 h-4" />
+          Add to Cart
+        </button>
+      </div>
+    </div>
+    <div className="p-6">
+      <div className="flex items-center gap-1 mb-2">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+        ))}
+        <span className="text-sm text-gray-600 ml-2">({product.rating})</span>
+      </div>
+      <h3 className="font-semibold text-lg mb-2 text-gray-900">{product.name}</h3>
+      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+      <div className="flex items-center justify-between">
+        <span className="text-2xl font-bold text-[#8a6e5d]">${product.price}</span>
+        <span className="text-sm text-gray-500">{product.stock} left</span>
+      </div>
+    </div>
+  </div>
+)}

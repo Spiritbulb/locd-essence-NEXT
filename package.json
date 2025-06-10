@@ -6,12 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "lint": "next lint"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.6.1",
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
+    "@opennextjs/cloudflare": "^1.2.1",
     "@uppy/core": "^4.4.6",
     "@uppy/dashboard": "^4.3.4",
     "@uppy/react": "^4.3.0",
@@ -30,6 +34,7 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.19.1"
   }
 }
