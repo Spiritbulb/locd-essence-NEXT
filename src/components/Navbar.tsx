@@ -1,8 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Menu, X, User, Crown, Search, Heart } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import link from 'next/link';
 
 const Navbar = ({ cartItemsCount = 0 }) => {
+  const pathname = usePathname(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -43,12 +46,20 @@ const Navbar = ({ cartItemsCount = 0 }) => {
     closeMenus();
   };
 
-  const navigationLinks = [
-    { href: '/', label: 'Home', active: true },
+   const navigationLinks = [
+    { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
     { href: '/accessories', label: 'Accessories' },
     { href: '/about', label: 'Our Story' },
   ];
+
+    const isLinkActive = (href: string) => {
+    if (href === '/') {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
+/* Removed erroneous isLinkActive(link.href) call */
 
   return (
     <>
@@ -73,26 +84,28 @@ const Navbar = ({ cartItemsCount = 0 }) => {
               </button>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              {navigationLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.href}
-                  className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group ${
-                    link.active 
-                      ? 'text-[#8a6e5d] bg-[#8a6e5d]/10' 
-                      : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
-                  }`}
-                >
-                  {link.label}
-                  {link.active && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#8a6e5d] rounded-full"></div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#8a6e5d]/0 via-[#8a6e5d]/5 to-[#8a6e5d]/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </a>
-              ))}
-            </div>
+                    {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-1">
+          {navigationLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group ${
+                isLinkActive(link.href)
+                  ? 'text-[#8a6e5d] bg-[#8a6e5d]/10' 
+                  : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
+              }`}
+            >
+
+                               {link.label}
+              {isLinkActive(link.href) && (
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#8a6e5d] rounded-full"></div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#8a6e5d]/0 via-[#8a6e5d]/5 to-[#8a6e5d]/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </a>
+          ))}
+        </div>
+
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-3">
@@ -201,7 +214,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                   href={link.href}
                   onClick={closeMenus}
                   className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                    link.active 
+                     isLinkActive(link.href)
                       ? 'text-[#8a6e5d] bg-[#8a6e5d]/10' 
                       : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
                   }`}
