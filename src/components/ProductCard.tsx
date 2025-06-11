@@ -1,58 +1,197 @@
+// src/components/ProductCard.tsx
+
 'use client';
 
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Heart, ShoppingBag, Star } from 'lucide-react';
 import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Product } from '@/types';
 
-type Product = {
-  id: string | number;
-  name: string;
-  image: string;
-  slug: string;
-  price: number | string;
-  discount?: number;
-  isNew?: boolean;
-  rating: number;
-  stock: number;
-  description: string;
-};
+interface ProductCardProps {
+  product: Product;
+}
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product }: ProductCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(price);
+  };
+
+  const discount = product.discount ?? 0;
+  const originalPrice = discount > 0 
+    ? product.price / (1 - discount / 100)
+    : product.price;
+
   return (
-    <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100">
-      <div className="relative overflow-hidden">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-          <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors">
-          <Heart className="w-5 h-5 text-[#8a6e5d]" />
+    <div 
+      className="group relative bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-200"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Product Badges */}
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+        {product.isNew && (
+          <span className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-full shadow-lg">
+            New
+          </span>
+        )}
+        {(product.discount ?? 0) > 0 && (
+          <span className="px-3 py-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-semibold rounded-full shadow-lg">
+            -{product.discount ?? 0}%
+          </span>
+        )}
+        {product.stock <= 5 && product.stock > 0 && (
+          <span className="px-3 py-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold rounded-full shadow-lg">
+            Only {product.stock} left
+          </span>
+        )}
+      </div>
+
+      {/* Wishlist Button */}
+      <button className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 group/heart">
+        <svg 
+          className={`w-5 h-5 transition-all duration-200 ${
+            isHovered ? 'text-red-500 fill-red-500' : 'text-gray-400'
+          } group-hover/heart:text-red-500 group-hover/heart:fill-red-500`}
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+          />
+        </svg>
+      </button>
+
+      {/* Product Image */}
+      <Link href={`/products/${product.slug}`} className="block">
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
+          <Image
+            src={product.image}
+            alt={product.altText}
+            fill
+            className={`object-cover transition-all duration-700 group-hover:scale-110 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={() => setImageLoaded(true)}
+          />
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-amber-200 border-t-amber-500 rounded-full animate-spin"></div>
+            </div>
+          )}
+          
+          {/* Overlay on hover */}
+          <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`} />
+          
+          {/* Quick View Button */}
+          <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}>
+            <button className="px-6 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-amber-50 transition-colors shadow-lg">
+              Quick View
+            </button>
+          </div>
+        </div>
+      </Link>
+
+      {/* Product Info */}
+      <div className="p-6">
+        {/* Brand */}
+        <p className="text-sm text-amber-600 font-medium mb-2">{product.brand}</p>
+        
+        {/* Product Name */}
+        <Link href={`/products/${product.slug}`}>
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-amber-600 transition-colors">
+            {product.name}
+          </h3>
+        </Link>
+
+        {/* Rating */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <svg
+                key={i}
+                className={`w-4 h-4 ${
+                  i < Math.floor(product.rating) 
+                    ? 'text-amber-400 fill-amber-400' 
+                    : i < product.rating 
+                      ? 'text-amber-400 fill-amber-400' 
+                      : 'text-gray-200'
+                }`}
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+          </div>
+          <span className="text-sm text-gray-500">
+            {product.rating} ({product.reviews} reviews)
+          </span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-xl font-bold text-gray-900">
+            {formatPrice(product.price)}
+          </span>
+          {(product.discount ?? 0) > 0 && (
+            <span className="text-sm text-gray-500 line-through">
+              {formatPrice(originalPrice)}
+            </span>
+          )}
+        </div>
+
+        {/* Stock Status */}
+        <div className="flex items-center gap-2 mb-4">
+          <div className={`w-2 h-2 rounded-full ${
+            product.inStock ? 'bg-green-500' : 'bg-red-500'
+          }`}></div>
+          <span className={`text-sm ${
+            product.inStock ? 'text-green-600' : 'text-red-600'
+          }`}>
+            {product.inStock ? 'In Stock' : 'Out of Stock'}
+          </span>
+        </div>
+
+        {/* Add to Cart Button */}
+        <button 
+          className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 ${
+            product.inStock
+              ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 hover:shadow-lg transform hover:scale-105'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+          }`}
+          disabled={!product.inStock}
+        >
+          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
         </button>
+
+        {/* Quick Actions */}
+        <div className="flex gap-2 mt-3">
+          <button className="flex-1 py-2 px-3 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            Quick View
+          </button>
+          <button className="flex-1 py-2 px-3 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            Compare
+          </button>
+        </div>
       </div>
-      <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-        <button className="w-full py-2 px-4 bg-[#8a6e5d] text-white rounded-full font-medium hover:bg-[#7e4507] transition-colors flex items-center justify-center gap-2">
-          <ShoppingBag className="w-4 h-4" />
-          Add to Cart
-        </button>
-      </div>
+
+      {/* Hover Animation Line */}
+      <div className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-300 ${
+        isHovered ? 'w-full' : 'w-0'
+      }`}></div>
     </div>
-    <div className="p-6">
-      <div className="flex items-center gap-1 mb-2">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-        ))}
-        <span className="text-sm text-gray-600 ml-2">({product.rating})</span>
-      </div>
-      <h3 className="font-semibold text-lg mb-2 text-gray-900">{product.name}</h3>
-      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-      <div className="flex items-center justify-between">
-        <span className="text-2xl font-bold text-[#8a6e5d]">${product.price}</span>
-        <span className="text-sm text-gray-500">{product.stock} left</span>
-      </div>
-    </div>
-  </div>
-)}
+  );
+}
