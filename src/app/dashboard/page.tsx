@@ -1,8 +1,7 @@
-'use client' // Enables client-side rendering and hooks like useEffect
+'use client'
 
 import { useEffect, useState } from 'react'
 
-// Define the shape of each inventory item returned from the API
 type InventoryItem = {
     item_id: string
     quantity: number
@@ -11,30 +10,43 @@ type InventoryItem = {
 }
 
 export default function Dashboard() {
-    // State to hold inventory items
     const [items, setItems] = useState<InventoryItem[]>([])
-    // State to track loading status
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-    // Fetch inventory data from your Cloudflare Worker proxy
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('https://locdshop.spiritbulb.workers.dev/api/inventory')
+                setError(null)
+                
+                const res = await fetch('https://locdshop.spiritbulb.workers.dev/api/inventory', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
 
-                // Debug: log raw response if it failed
                 if (!res.ok) {
-                    const text = await res.text()
-                    console.error('Server returned error page:', text)
-                    setLoading(false)
+                    const errorText = await res.text()
+                    console.error('Server error:', errorText)
+                    setError(`Server error: ${res.status} ${res.statusText}`)
                     return
                 }
 
                 const data = await res.json()
                 console.log('Inventory response:', data)
-                setItems(data)
+                
+                if (Array.isArray(data)) {
+                    setItems(data)
+                } else if (data.error) {
+                    setError(data.error)
+                } else {
+                    setError('Unexpected response format')
+                }
+                
             } catch (error) {
                 console.error('Fetch error:', error)
+                setError(error instanceof Error ? error.message : 'Unknown error occurred')
             } finally {
                 setLoading(false)
             }
@@ -43,14 +55,22 @@ export default function Dashboard() {
         fetchData()
     }, [])
 
-
-    // Show loading message while fetching
     if (loading) return <p className="p-4 text-gray-500">Loading inventory...</p>
+    
+    if (error) return (
+        <div className="p-4">
+            <p className="text-red-500 mb-2">Error: {error}</p>
+            <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+                Retry
+            </button>
+        </div>
+    )
+    
+    if (!items.length) return <p className="p-4 text-yellow-500">No items found.</p>
 
-    // Show fallback if no items are returned
-    if (!items.length) return <p className="p-4 text-red-500">No items found.</p>
-
-    // Render inventory grid
     return (
         <div className="p-4 mt-20">
             <h1 className="text-2xl font-bold mb-4 text-amber-800">Inventory Dashboard</h1>
@@ -60,9 +80,15 @@ export default function Dashboard() {
                         key={item.item_id}
                         className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-all"
                     >
-                        <div className="text-xl font-semibold text-amber-700">Name: {item.item_name}</div>
-                        <div className="text-xl font-semibold text-amber-700">ID: {item.item_id}</div>
-                        <div className="mt-2 text-gray-700">Quantity: {item.quantity}</div>
+                        <div className="text-xl font-semibold text-amber-700">
+                            Name: {item.item_name || 'Unknown'}
+                        </div>
+                        <div className="text-xl font-semibold text-amber-700">
+                            ID: {item.item_id}
+                        </div>
+                        <div className="mt-2 text-gray-700">
+                            Quantity: {item.quantity}
+                        </div>
                         <div className="mt-1 text-gray-600">
                             Price: <span className="font-medium text-green-700">${item.price}</span>
                         </div>
