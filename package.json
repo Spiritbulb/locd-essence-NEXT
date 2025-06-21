@@ -16,6 +16,7 @@
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
     "@opennextjs/cloudflare": "^1.2.1",
+    "@shopify/storefront-api-client": "^1.0.8",
     "@uppy/core": "^4.4.6",
     "@uppy/dashboard": "^4.3.4",
     "@uppy/react": "^4.3.0",

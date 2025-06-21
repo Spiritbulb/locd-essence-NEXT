@@ -21,6 +21,10 @@ export default function Home() {
       category: 'hair-care',
       stock: 50,
       rating: 4.8,
+      reviews: 0,
+      inStock: true,
+      sku: 'MRSHAMPOO-001',
+      brand: 'Locd Essence'
     },
     {
       id: '2',
@@ -32,6 +36,10 @@ export default function Home() {
       category: 'styling',
       stock: 30,
       rating: 4.9,
+      reviews: 0,
+      inStock: true,
+      sku: 'CURLCREAM-002',
+      brand: 'Locd Essence'
     },
     {
       id: '3',
@@ -43,6 +51,10 @@ export default function Home() {
       category: 'scalp-care',
       stock: 45,
       rating: 4.7,
+      reviews: 0,
+      inStock: true,
+      sku: 'SCALPOIL-003',
+      brand: 'Locd Essence'
     },
     {
       id: '4',
@@ -54,6 +66,10 @@ export default function Home() {
       category: 'jewelry',
       stock: 15,
       rating: 5.0,
+      reviews: 0,
+      inStock: true,
+      sku: 'GOLDCROWN-004',
+      brand: 'Locd Essence'
     },
     {
       id: '5',
@@ -65,6 +81,10 @@ export default function Home() {
       category: 'accessories',
       stock: 25,
       rating: 4.8,
+      reviews: 0,
+      inStock: true,
+      sku: 'BEADCLIPS-005',
+      brand: 'Locd Essence'
     },
     {
       id: '6',
@@ -76,6 +96,10 @@ export default function Home() {
       category: 'jewelry',
       stock: 20,
       rating: 4.9,
+      reviews: 0,
+      inStock: true,
+      sku: 'STMEARRINGS-006',
+      brand: 'Locd Essence'
     },
   ];
 
