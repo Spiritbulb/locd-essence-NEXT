@@ -5,11 +5,11 @@ import { usePathname } from 'next/navigation';
 import link from 'next/link';
 
 const Navbar = ({ cartItemsCount = 0 }) => {
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  
+
   // Mock user data - replace with your actual auth logic
   const [user, setUser] = useState({
     name: "Sarah Johnson",
@@ -46,71 +46,71 @@ const Navbar = ({ cartItemsCount = 0 }) => {
     closeMenus();
   };
 
-   const navigationLinks = [
+  const navigationLinks = [
     { href: '/', label: 'Home' },
-    { href: '/products', label: 'Products' },
+    { href: '/dashboard', label: 'Products' },
     { href: '/accessories', label: 'Accessories' },
     { href: '/about', label: 'Our Story' },
   ];
 
-    const isLinkActive = (href: string) => {
+  const isLinkActive = (href: string) => {
     if (href === '/') {
       return pathname === href;
     }
     return pathname.startsWith(href);
   };
-/* Removed erroneous isLinkActive(link.href) call */
+  /* Removed erroneous isLinkActive(link.href) call */
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50' 
-          : 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100/50'
-      }`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+        ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50'
+        : 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100/50'
+        }`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <div className="flex items-center">
               <button className="flex items-center group transition-all duration-300 hover:scale-105">
-                <div className="flex items-center gap-3">   
+                <div className="flex items-center gap-3">
                   <div>
-                    <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
-                      Loc'd Essence
-                    </span>
-                    <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
+                    <img
+                      src="/locd.png"
+                      alt="Loc'd Essence Logo"
+                      className="h-7 w-auto object-contain bg-transparent"
+                    />
                   </div>
+                  <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
                 </div>
               </button>
             </div>
 
-                    {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center space-x-1">
-          {navigationLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group ${
-                isLinkActive(link.href)
-                  ? 'text-[#8a6e5d] bg-[#8a6e5d]/10' 
-                  : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
-              }`}
-            >
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1">
+              {navigationLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group ${isLinkActive(link.href)
+                    ? 'text-[#8a6e5d] bg-[#8a6e5d]/10'
+                    : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
+                    }`}
+                >
 
-                               {link.label}
-              {isLinkActive(link.href) && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#8a6e5d] rounded-full"></div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#8a6e5d]/0 via-[#8a6e5d]/5 to-[#8a6e5d]/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </a>
-          ))}
-        </div>
+                  {link.label}
+                  {isLinkActive(link.href) && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#8a6e5d] rounded-full"></div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#8a6e5d]/0 via-[#8a6e5d]/5 to-[#8a6e5d]/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </a>
+              ))}
+            </div>
 
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-3">
               {/* Search Button */}
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="p-2.5 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300 group"
               >
@@ -175,9 +175,8 @@ const Navbar = ({ cartItemsCount = 0 }) => {
           </div>
 
           {/* Search Bar */}
-          <div className={`overflow-hidden transition-all duration-300 ${
-            isSearchOpen ? 'max-h-20 pb-4' : 'max-h-0'
-          }`}>
+          <div className={`overflow-hidden transition-all duration-300 ${isSearchOpen ? 'max-h-20 pb-4' : 'max-h-0'
+            }`}>
             <div className="relative">
               <input
                 type="text"
@@ -190,9 +189,8 @@ const Navbar = ({ cartItemsCount = 0 }) => {
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          isMobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-        }`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${isMobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+          }`}>
           <div className="px-6 pb-6 bg-white/95 backdrop-blur-xl border-t border-gray-100">
             {/* Mobile Search */}
             <div className="mb-6 pt-4">
@@ -213,11 +211,10 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                   key={index}
                   href={link.href}
                   onClick={closeMenus}
-                  className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                     isLinkActive(link.href)
-                      ? 'text-[#8a6e5d] bg-[#8a6e5d]/10' 
-                      : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
-                  }`}
+                  className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${isLinkActive(link.href)
+                    ? 'text-[#8a6e5d] bg-[#8a6e5d]/10'
+                    : 'text-gray-700 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10'
+                    }`}
                 >
                   {link.label}
                 </a>
@@ -278,7 +275,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
 
       {/* Backdrop for mobile menu */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
           onClick={closeMenus}
         />
