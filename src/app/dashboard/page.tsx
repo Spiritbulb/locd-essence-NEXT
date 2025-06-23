@@ -1,99 +1,168 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
-type InventoryItem = {
-    item_id: string
-    quantity: number
-    item_name?: string
-    price: number
-}
+import { useState, useEffect } from 'react'
+import { Plus, Users, Package, ShoppingCart } from 'lucide-react'
+import InventoryTab from './components/InventoryTab'
+import ProductsTab from './components/ProductsTab'
+import CustomersTab from './components/CustomersTab'
+import OrdersTab from './components/OrdersTab'
+import { Tab, InventoryItem, Customer, Order } from './types'
 
 export default function Dashboard() {
+    const [activeTab, setActiveTab] = useState<Tab>('inventory')
     const [items, setItems] = useState<InventoryItem[]>([])
+    const [customers, setCustomers] = useState<Customer[]>([])
+    const [orders, setOrders] = useState<Order[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
+    // Fixed initial data loading
     useEffect(() => {
-        const fetchData = async () => {
+        const loadData = async () => {
             try {
+                setLoading(true)
                 setError(null)
                 
-                const res = await fetch('https://locdshop.spiritbulb.workers.dev/api/inventory', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 500))
+                
+                // Initialize with mock data
+                const mockCustomers: Customer[] = [
+                    {
+                        id: '1',
+                        name: 'John Doe',
+                        email: 'john@example.com',
+                        phone: '123-456-7890',
+                        address: '123 Main St',
+                        created_at: new Date().toISOString()
                     },
-                })
-
-                if (!res.ok) {
-                    const errorText = await res.text()
-                    console.error('Server error:', errorText)
-                    setError(`Server error: ${res.status} ${res.statusText}`)
-                    return
-                }
-
-                const data = await res.json()
-                console.log('Inventory response:', data)
+                    {
+                        id: '2',
+                        name: 'Jane Smith',
+                        email: 'jane@example.com',
+                        phone: '987-654-3210',
+                        address: '456 Oak Ave',
+                        created_at: new Date().toISOString()
+                    }
+                ]
                 
-                if (Array.isArray(data)) {
-                    setItems(data)
-                } else if (data.error) {
-                    setError(data.error)
-                } else {
-                    setError('Unexpected response format')
-                }
+                const mockItems: InventoryItem[] = [
+                    {
+                        item_id: '1',
+                        item_name: 'Sample Product',
+                        description: 'A sample product for testing',
+                        price: 29.99,
+                        quantity: 100,
+                        category: 'Electronics',
+                        sku: 'SP001',
+                        createdAt: new Date().toISOString()
+                    }
+                ]
                 
-            } catch (error) {
-                console.error('Fetch error:', error)
-                setError(error instanceof Error ? error.message : 'Unknown error occurred')
+                setCustomers(mockCustomers)
+                setItems(mockItems)
+                setOrders([])
+                
+            } catch (err) {
+                console.error('Error loading data:', err)
+                setError(err instanceof Error ? err.message : 'Failed to load data')
             } finally {
                 setLoading(false)
             }
         }
+        
+        loadData()
+    }, []) // Empty dependency array - only run once on mount
 
-        fetchData()
-    }, [])
-
-    if (loading) return <p className="p-4 text-gray-500">Loading inventory...</p>
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600 mx-auto mb-4"></div>
+                    <p className="text-gray-500">Loading dashboard...</p>
+                </div>
+            </div>
+        )
+    }
     
-    if (error) return (
-        <div className="p-4">
-            <p className="text-red-500 mb-2">Error: {error}</p>
-            <button 
-                onClick={() => window.location.reload()} 
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-                Retry
-            </button>
-        </div>
-    )
-    
-    if (!items.length) return <p className="p-4 text-yellow-500">No items found.</p>
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center p-6 bg-red-50 rounded-lg border border-red-200">
+                    <p className="text-red-600 mb-4">Error: {error}</p>
+                    <button 
+                        onClick={() => window.location.reload()} 
+                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        )
+    }
 
     return (
-        <div className="p-4 mt-20">
-            <h1 className="text-2xl font-bold mb-4 text-amber-800">Inventory Dashboard</h1>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {items.map((item) => (
-                    <div
-                        key={item.item_id}
-                        className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-all"
-                    >
-                        <div className="text-xl font-semibold text-amber-700">
-                            Name: {item.item_name || 'Unknown'}
-                        </div>
-                        <div className="text-xl font-semibold text-amber-700">
-                            ID: {item.item_id}
-                        </div>
-                        <div className="mt-2 text-gray-700">
-                            Quantity: {item.quantity}
-                        </div>
-                        <div className="mt-1 text-gray-600">
-                            Price: <span className="font-medium text-green-700">${item.price}</span>
-                        </div>
-                    </div>
-                ))}
+        <div className="p-4 mt-20 max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6 text-amber-800">Business Dashboard</h1>
+            
+            {/* Navigation Tabs */}
+            <div className="border-b border-gray-200 mb-6">
+                <nav className="flex space-x-8">
+                    {[
+                        { id: 'inventory', label: 'Inventory', icon: Package },
+                        { id: 'products', label: 'Add Products', icon: Plus },
+                        { id: 'customers', label: 'Customers', icon: Users },
+                        { id: 'orders', label: 'Orders', icon: ShoppingCart }
+                    ].map(tab => {
+                        const Icon = tab.icon
+                        return (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id as Tab)}
+                                className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                                    activeTab === tab.id
+                                        ? 'border-amber-500 text-amber-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
+                            >
+                                <Icon size={18} />
+                                <span>{tab.label}</span>
+                            </button>
+                        )
+                    })}
+                </nav>
+            </div>
+
+            {/* Tab Content */}
+            <div className="min-h-96">
+                {activeTab === 'inventory' && (
+                    <InventoryTab 
+                        items={items} 
+                        setItems={setItems} 
+                        setLoading={setLoading} 
+                        setError={setError} 
+                    />
+                )}
+                {activeTab === 'products' && (
+                    <ProductsTab 
+                        items={items} 
+                        setItems={setItems} 
+                    />
+                )}
+                {activeTab === 'customers' && (
+                    <CustomersTab 
+                        customers={customers} 
+                        setCustomers={setCustomers} 
+                    />
+                )}
+                {activeTab === 'orders' && (
+                    <OrdersTab 
+                        orders={orders} 
+                        setOrders={setOrders} 
+                        customers={customers} 
+                        items={items} 
+                    />
+                )}
             </div>
         </div>
     )
