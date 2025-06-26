@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Menu, X, User, Crown, Search, Heart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import link from 'next/link';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const Navbar = ({ cartItemsCount = 0 }) => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const router = useRouter();
 
   // Mock user data - replace with your actual auth logic
   const [user, setUser] = useState({
@@ -49,7 +52,6 @@ const Navbar = ({ cartItemsCount = 0 }) => {
   const navigationLinks = [
     { href: '/', label: 'Home' },
     { href: '/dashboard', label: 'Products' },
-    { href: '/accessories', label: 'Accessories' },
     { href: '/about', label: 'Our Story' },
   ];
 
@@ -118,7 +120,9 @@ const Navbar = ({ cartItemsCount = 0 }) => {
               </button>
 
               {/* Wishlist Button */}
-              <button className="p-2.5 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300 relative group">
+              <button
+                onClick={() => router.push('/favourites')}
+                className="p-2.5 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300 relative group">
                 <Heart className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
                   2
@@ -126,7 +130,9 @@ const Navbar = ({ cartItemsCount = 0 }) => {
               </button>
 
               {/* Cart Button */}
-              <button className="p-2.5 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300 relative group">
+              <button
+                onClick={() => router.push('/cart')}
+                className="p-2.5 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300 relative group">
                 <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                 {cartItemsCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg">
