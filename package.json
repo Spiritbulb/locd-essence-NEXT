@@ -12,10 +12,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/core": "^0.34.2",
     "@auth0/nextjs-auth0": "^4.6.1",
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
     "@opennextjs/cloudflare": "^1.2.1",
+    "@shopify/shopify-api": "^11.13.0",
     "@shopify/storefront-api-client": "^1.0.8",
     "@uppy/core": "^4.4.6",
     "@uppy/dashboard": "^4.3.4",
@@ -25,6 +27,7 @@
     "framer-motion": "^12.18.1",
     "lucide-react": "^0.513.0",
     "next": "15.3.3",
+    "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

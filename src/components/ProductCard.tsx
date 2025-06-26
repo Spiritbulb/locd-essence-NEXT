@@ -6,19 +6,21 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types';
+import { useCart } from '@/context/CartContext';
 
-interface ProductCardProps {
+type ProductCardProps = {
   product: Product;
-}
+};
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart, loading } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'KES',
     }).format(price);
   };
 
@@ -26,6 +28,22 @@ export default function ProductCard({ product }: ProductCardProps) {
   const originalPrice = discount > 0 
     ? product.price / (1 - discount / 100)
     : product.price;
+
+  const handleAddToCart = async () => {
+    try {
+      await addToCart({
+        id: product.id, // This will be replaced by Shopify's line item ID
+        variantId: product.variants.edges[0].node.id, // The actual product variant ID
+        name: product.title,
+        price: product.price,
+        image: product.featuredImage?.url || '',
+      });
+    } catch (error) {
+      // Handle error (maybe show a toast notification)
+      console.error('Failed to add to cart:', error);
+    }
+  };
+
 
   return (
     <div 
@@ -167,15 +185,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Add to Cart Button */}
         <button 
-          className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 ${
-            product.inStock
-              ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 hover:shadow-lg transform hover:scale-105'
-              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-          }`}
-          disabled={!product.inStock}
-        >
-          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-        </button>
+        onClick={handleAddToCart}
+        className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 ${
+          product.inStock
+            ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 hover:shadow-lg transform hover:scale-105'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        }`}
+        disabled={!product.inStock || loading}
+      >
+        {loading ? 'Adding...' : (product.inStock ? 'Add to Cart' : 'Out of Stock')}
+      </button>
 
         {/* Quick Actions */}
         <div className="flex gap-2 mt-3">
