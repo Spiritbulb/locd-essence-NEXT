@@ -14,6 +14,8 @@ interface ShopifyResponse {
     errors?: unknown;
 }
 
+export const runtime = 'edge';
+
 export async function POST(request: Request): Promise<NextResponse<ShopifyResponse | { error: string }>> {
     try {
         const { query, variables }: ShopifyRequestBody = await request.json();

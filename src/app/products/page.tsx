@@ -5,6 +5,8 @@ import { Filter, Search, Heart, ShoppingCart, Star, Grid, List, ChevronDown, Loa
 import { client } from '@/lib/utils/shopify';
 import ProductCard from '@/components/ProductCard';
 
+export const runtime = 'edge';
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

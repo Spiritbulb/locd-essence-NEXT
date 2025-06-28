@@ -182,6 +182,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
             ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50'
             : 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100/50'
           }`}
+          
       >
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center py-3">
