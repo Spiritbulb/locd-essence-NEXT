@@ -4,16 +4,16 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Heart, 
-  ShoppingCart, 
-  Star, 
-  Minus, 
-  Plus, 
-  Share2, 
-  Shield, 
-  Truck, 
+import {
+  ArrowLeft,
+  Heart,
+  ShoppingCart,
+  Star,
+  Minus,
+  Plus,
+  Share2,
+  Shield,
+  Truck,
   RefreshCw,
   Loader2,
   Check,
@@ -67,10 +67,12 @@ interface ProductData {
   }[];
 }
 
+export const runtime = 'edge';
+
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
-  
+
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +89,7 @@ export default function ProductDetailPage() {
     try {
       setError(null);
       setLoading(true);
-      
+
       const response = await client.request(`
         {
           productByHandle(handle: "${slug}") {
@@ -138,12 +140,12 @@ export default function ProductDetailPage() {
       }
 
       setProduct(productData);
-      
+
       // Set default selected variant (first available one)
       const firstVariant = productData.variants.edges[0]?.node;
       if (firstVariant) {
         setSelectedVariant(firstVariant);
-        
+
         // Initialize selected options based on first variant
         const initialOptions: Record<string, string> = {};
         firstVariant.selectedOptions.forEach((option: { name: string; value: string }) => {
@@ -151,7 +153,7 @@ export default function ProductDetailPage() {
         });
         setSelectedOptions(initialOptions);
       }
-      
+
     } catch (err: any) {
       console.error('Error fetching product:', err);
       setError(err.message || 'Failed to fetch product');
@@ -170,11 +172,11 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (product && Object.keys(selectedOptions).length > 0) {
       const variant = product.variants.edges.find(({ node }) => {
-        return node.selectedOptions.every(option => 
+        return node.selectedOptions.every(option =>
           selectedOptions[option.name] === option.value
         );
       })?.node;
-      
+
       if (variant) {
         setSelectedVariant(variant);
       }
@@ -197,7 +199,7 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = async () => {
     if (!selectedVariant || !product) return;
-    
+
     try {
       await addToCart({
         id: product.id,
@@ -213,7 +215,7 @@ export default function ProductDetailPage() {
 
   const handleToggleFavorite = () => {
     if (!product) return;
-    
+
     if (isFavorite(product.id)) {
       removeFromFavorites(product.id);
     } else {
@@ -240,7 +242,7 @@ export default function ProductDetailPage() {
 
   const nextImage = () => {
     if (product && product.images.edges.length > 1) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === product.images.edges.length - 1 ? 0 : prev + 1
       );
     }
@@ -248,7 +250,7 @@ export default function ProductDetailPage() {
 
   const prevImage = () => {
     if (product && product.images.edges.length > 1) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === 0 ? product.images.edges.length - 1 : prev - 1
       );
     }
@@ -329,13 +331,12 @@ export default function ProductDetailPage() {
                   src={currentImage.url}
                   alt={currentImage.altText || product.title}
                   fill
-                  className={`object-cover transition-opacity duration-300 ${
-                    imageLoaded ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className={`object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                    }`}
                   onLoad={() => setImageLoaded(true)}
                 />
               )}
-              
+
               {!imageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-8 h-8 border-2 border-amber-200 border-t-amber-500 rounded-full animate-spin"></div>
@@ -367,9 +368,8 @@ export default function ProductDetailPage() {
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentImageIndex ? 'bg-[#8a6e5d]' : 'bg-white/60'
-                      }`}
+                      className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex ? 'bg-[#8a6e5d]' : 'bg-white/60'
+                        }`}
                     />
                   ))}
                 </div>
@@ -383,11 +383,10 @@ export default function ProductDetailPage() {
                   <button
                     key={image.node.id}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 bg-white rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex 
-                        ? 'border-[#8a6e5d]' 
+                    className={`flex-shrink-0 w-20 h-20 bg-white rounded-lg overflow-hidden border-2 transition-all ${index === currentImageIndex
+                        ? 'border-[#8a6e5d]'
                         : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                      }`}
                   >
                     <Image
                       src={image.node.url}
@@ -420,9 +419,8 @@ export default function ProductDetailPage() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${
-                      i < 4 ? 'text-amber-400 fill-amber-400' : 'text-gray-200'
-                    }`}
+                    className={`w-5 h-5 ${i < 4 ? 'text-amber-400 fill-amber-400' : 'text-gray-200'
+                      }`}
                   />
                 ))}
               </div>
@@ -454,11 +452,10 @@ export default function ProductDetailPage() {
                         <button
                           key={value}
                           onClick={() => handleOptionChange(option.name, value)}
-                          className={`px-4 py-2 border rounded-lg transition-all ${
-                            selectedOptions[option.name] === value
+                          className={`px-4 py-2 border rounded-lg transition-all ${selectedOptions[option.name] === value
                               ? 'border-[#8a6e5d] bg-[#8a6e5d] text-white'
                               : 'border-gray-300 bg-white text-gray-700 hover:border-[#8a6e5d]'
-                          }`}
+                            }`}
                         >
                           {value}
                         </button>
@@ -471,12 +468,10 @@ export default function ProductDetailPage() {
 
             {/* Stock Status */}
             <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${
-                isInStock ? 'bg-green-500' : 'bg-red-500'
-              }`}></div>
-              <span className={`font-medium ${
-                isInStock ? 'text-green-600' : 'text-red-600'
-              }`}>
+              <div className={`w-3 h-3 rounded-full ${isInStock ? 'bg-green-500' : 'bg-red-500'
+                }`}></div>
+              <span className={`font-medium ${isInStock ? 'text-green-600' : 'text-red-600'
+                }`}>
                 {isInStock ? `In Stock (${selectedVariant?.quantityAvailable} available)` : 'Out of Stock'}
               </span>
             </div>
@@ -510,11 +505,10 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleAddToCart}
                 disabled={!isInStock || cartLoading}
-                className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold transition-all ${
-                  isInStock
+                className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold transition-all ${isInStock
                     ? 'bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white hover:from-[#7e4507] hover:to-[#8a6e5d] hover:shadow-lg transform hover:scale-105'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                }`}
+                  }`}
               >
                 {cartLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -527,11 +521,10 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleToggleFavorite}
                 disabled={favoritesLoading}
-                className={`p-4 border-2 rounded-xl transition-all hover:scale-105 ${
-                  isFavorite(product.id)
+                className={`p-4 border-2 rounded-xl transition-all hover:scale-105 ${isFavorite(product.id)
                     ? 'border-red-200 bg-red-50 text-red-600'
                     : 'border-gray-300 bg-white text-gray-600 hover:border-red-300 hover:text-red-600'
-                }`}
+                  }`}
               >
                 {favoritesLoading ? (
                   <Loader2 className="w-6 h-6 animate-spin" />
