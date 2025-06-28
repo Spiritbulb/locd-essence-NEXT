@@ -18,17 +18,34 @@ const Navbar = ({ cartItemsCount = 0 }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [authMessage, setAuthMessage] = useState('');
-  const [authMode, setAuthMode] = useState('signin'); 
+  const [authMode, setAuthMode] = useState('signin');
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const { customer, loginWithPassword, createCustomer, recoverCustomerAccount, logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+
+      // Update isScrolled based on scroll position
+      setIsScrolled(currentScrollY > 10);
+
+      // Show/hide navbar based on scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 40) {
+        setIsVisible(false); // scrolling down
+      } else {
+        setIsVisible(true); // scrolling up
+      }
+
+      lastScrollY = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
 
   const closeMenus = () => {
     setIsMobileMenuOpen(false);
@@ -45,7 +62,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
     setAuthMessage('');
   };
 
-  interface AuthFormEvent extends React.FormEvent<HTMLFormElement> {}
+  interface AuthFormEvent extends React.FormEvent<HTMLFormElement> { }
 
   interface RecoverResult {
     success: boolean;
@@ -159,12 +176,15 @@ const Navbar = ({ cartItemsCount = 0 }) => {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-        ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50'
-        : 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100/50'
-        }`}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-center py-4">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 transform ${isVisible ? 'translate-y-0' : '-translate-y-full'
+          } ${isScrolled
+            ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50'
+            : 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100/50'
+          }`}
+      >
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex justify-between items-center py-3">
             {/* Logo */}
             <div className="flex items-center">
               <button className="flex items-center group transition-all duration-300 hover:scale-105">
@@ -176,12 +196,12 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       className="h-16 w-auto object-contain"
                     />
                   </div>
-                   <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
-                  Loc'd Essence
-                </span>
-                <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
-              </div>
+                  <div>
+                    <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
+                      Loc'd Essence
+                    </span>
+                    <div className="text-xs text-gray-500 mt-1">Hair • Jewelry • Beauty</div>
+                  </div>
                 </div>
               </button>
             </div>
@@ -221,9 +241,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                 onClick={() => router.push('/favourites')}
                 className="p-2.5 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300 relative group">
                 <Heart className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
-                  2
-                </span>
+
               </button>
 
               {/* Cart Button */}
@@ -275,7 +293,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                     <p className="text-sm text-gray-500 mb-4">
                       {getAuthDescription()}
                     </p>
-                    
+
                     <form onSubmit={handleAuthSubmit} className="space-y-3">
                       {authMode === 'signup' && (
                         <div className="grid grid-cols-2 gap-3">
@@ -301,7 +319,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                           </div>
                         </div>
                       )}
-                      
+
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
@@ -313,7 +331,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                           className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8a6e5d]/20 focus:border-[#8a6e5d]/30 transition-all duration-300"
                         />
                       </div>
-                      
+
                       {authMode !== 'recover' && (
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -327,7 +345,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                           />
                         </div>
                       )}
-                      
+
                       {authMode === 'signup' && (
                         <div className="relative">
                           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -341,7 +359,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                           />
                         </div>
                       )}
-                      
+
                       <button
                         type="submit"
                         className="w-full px-4 py-2.5 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white rounded-lg font-medium text-sm hover:from-[#7e4507] hover:to-[#8a6e5d] transition-all duration-300"
@@ -349,7 +367,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                         {authMode === 'recover' ? 'Send Reset Link' : authMode === 'signup' ? 'Create Account' : 'Sign In'}
                       </button>
                     </form>
-                    
+
                     {/* Auth Mode Switcher */}
                     <div className="mt-4 flex items-center justify-between text-sm">
                       {authMode === 'signin' && (
@@ -377,7 +395,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                           </button>
                         </>
                       )}
-                      
+
                       {authMode === 'signup' && (
                         <button
                           type="button"
@@ -390,7 +408,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                           Already have an account? Sign In
                         </button>
                       )}
-                      
+
                       {authMode === 'recover' && (
                         <button
                           type="button"
@@ -404,7 +422,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                         </button>
                       )}
                     </div>
-                    
+
                     {authMessage && (
                       <p className={`mt-3 text-sm text-center ${authMessage.includes('successful') || authMessage.includes('sent') || authMessage.includes('created') ? 'text-green-600' : 'text-red-600'}`}>
                         {authMessage}
@@ -471,14 +489,13 @@ const Navbar = ({ cartItemsCount = 0 }) => {
 
             {/* Mobile Actions */}
             <div className="flex items-center justify-between mb-6 px-2">
-              <button 
+              <button
                 onClick={() => router.push('/favourites')}
                 className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300"
               >
                 <Heart className="w-5 h-5" />
-                <span className="text-sm">Wishlist (2)</span>
               </button>
-              <button 
+              <button
                 onClick={() => router.push('/cart')}
                 className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300"
               >
@@ -532,7 +549,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       />
                     </div>
                   )}
-                  
+
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
@@ -544,7 +561,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#8a6e5d]/20 focus:border-[#8a6e5d]/30"
                     />
                   </div>
-                  
+
                   {authMode !== 'recover' && (
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -558,7 +575,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       />
                     </div>
                   )}
-                  
+
                   {authMode === 'signup' && (
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -572,7 +589,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       />
                     </div>
                   )}
-                  
+
                   <button
                     type="submit"
                     className="w-full px-4 py-3 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white rounded-xl font-medium hover:from-[#7e4507] hover:to-[#8a6e5d] transition-all duration-300 shadow-lg"
@@ -580,7 +597,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                     {authMode === 'recover' ? 'Send Reset Link' : authMode === 'signup' ? 'Create Account' : 'Sign In'}
                   </button>
                 </form>
-                
+
                 {/* Mobile Auth Mode Switcher */}
                 <div className="mt-4 space-y-2 text-sm text-center">
                   {authMode === 'signin' && (
@@ -607,7 +624,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       </button>
                     </>
                   )}
-                  
+
                   {authMode === 'signup' && (
                     <button
                       type="button"
@@ -620,7 +637,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                       Already have an account? Sign In
                     </button>
                   )}
-                  
+
                   {authMode === 'recover' && (
                     <button
                       type="button"
@@ -634,7 +651,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                     </button>
                   )}
                 </div>
-                
+
                 {authMessage && (
                   <p className={`mt-3 text-sm text-center ${authMessage.includes('successful') || authMessage.includes('sent') || authMessage.includes('created') ? 'text-green-600' : 'text-red-600'}`}>
                     {authMessage}

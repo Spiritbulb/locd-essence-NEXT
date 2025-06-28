@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Star, ShoppingBag, Heart, ArrowRight, Sparkles, Crown, Gem } from 'lucide-react';
-import  ProductCard  from '@/components/ProductCard';
-import  CategoryCard  from '@/components/CategoryCard';
+import ProductCard from '@/components/ProductCard';
+import CategoryCard from '@/components/CategoryCard';
 import { Product, Category } from '@/types';
 
 
@@ -134,7 +134,7 @@ export default function Home() {
     },
     {
       name: "Tasha Williams",
-      location: "Lagos, Nigeria", 
+      location: "Lagos, Nigeria",
       text: "Finally found products that work with my 4C hair. The jewelry pieces are absolutely stunning!",
       avatar: "https://randomuser.me/api/portraits/women/68.jpg",
       rating: 5
@@ -153,21 +153,21 @@ export default function Home() {
       title: "Crown Your Natural Beauty",
       subtitle: "Discover premium hair care and luxury jewelry crafted for you",
       buttonText: "Shop Collection",
-      image: "https://images.unsplash.com/photo-1594736797933-d0eb8306c9e3?auto=format&fit=crop&w=1200&q=80",
+      image: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       accent: "New Arrivals"
     },
     {
       title: "Handcrafted Jewelry",
       subtitle: "Celebrate your heritage with our stunning jewelry collection",
       buttonText: "Explore Jewelry",
-      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=80",
+      image: "https://images.unsplash.com/photo-1727947074642-0bd47ef70b58?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       accent: "Limited Edition"
     },
     {
       title: "Natural Hair Care",
       subtitle: "Nourish your crown with products made for natural hair",
       buttonText: "Shop Hair Care",
-      image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80",
+      image: "https://images.unsplash.com/photo-1540256817643-88ca55778eb6?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       accent: "Bestsellers"
     },
   ];
@@ -194,7 +194,7 @@ export default function Home() {
       icon: <Sparkles className="w-8 h-8 text-[#8a6e5d]" />
     },
     {
-      title: "Night Protection", 
+      title: "Night Protection",
       fact: "Satin pillowcases and silk scarves reduce breakage by up to 45% while you sleep.",
       icon: <Crown className="w-8 h-8 text-[#8a6e5d]" />
     },
@@ -212,9 +212,8 @@ export default function Home() {
         {heroSlides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             <div className="absolute inset-0">
               <img
@@ -245,16 +244,15 @@ export default function Home() {
             </div>
           </div>
         ))}
-        
+
         {/* Slide Indicators */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
-              }`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
+                }`}
             />
           ))}
         </div>
