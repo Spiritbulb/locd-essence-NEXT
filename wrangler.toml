@@ -2,6 +2,13 @@
   name = "less-v1"
   compatibility_date = "2025-03-25"
   compatibility_flags = ["nodejs_compat"]
+
   [assets]
   directory = ".open-next/assets"
   binding = "ASSETS"
+
+  [vars]
+  NEXT_PUBLIC_SUPABASE_URL = "https://yolo.airline.co.ke"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+  SHOPIFY_STORE_DOMAIN = "locdessence.myshopify.com"
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN = "ddb88cf84836db80e53132bf6136dbbb"
