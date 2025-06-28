@@ -116,7 +116,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div>
             <div className="flex items-center gap-2 mb-4 group">
-              <button className="flex items-center group transition-all duration-300 hover:scale-105">
+              <button className="flex items-center group transition-all duration-300 hover:scale-105 padding-4">
                 <img src="/logoloc.png" alt="Loc'd Essence Logo" className="h-14 w-auto object-contain" />
                 <div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">

@@ -303,15 +303,6 @@ export default function ProductDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-          <Link href="/" className="hover:text-[#8a6e5d] transition-colors">Home</Link>
-          <span>/</span>
-          <Link href="/products" className="hover:text-[#8a6e5d] transition-colors">Products</Link>
-          <span>/</span>
-          <span className="text-gray-900">{product.title}</span>
-        </div>
-
         {/* Back Button */}
         <Link
           href="/products"
@@ -384,8 +375,8 @@ export default function ProductDetailPage() {
                     key={image.node.id}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`flex-shrink-0 w-20 h-20 bg-white rounded-lg overflow-hidden border-2 transition-all ${index === currentImageIndex
-                        ? 'border-[#8a6e5d]'
-                        : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-[#8a6e5d]'
+                      : 'border-gray-200 hover:border-gray-300'
                       }`}
                   >
                     <Image
@@ -453,8 +444,8 @@ export default function ProductDetailPage() {
                           key={value}
                           onClick={() => handleOptionChange(option.name, value)}
                           className={`px-4 py-2 border rounded-lg transition-all ${selectedOptions[option.name] === value
-                              ? 'border-[#8a6e5d] bg-[#8a6e5d] text-white'
-                              : 'border-gray-300 bg-white text-gray-700 hover:border-[#8a6e5d]'
+                            ? 'border-[#8a6e5d] bg-[#8a6e5d] text-white'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-[#8a6e5d]'
                             }`}
                         >
                           {value}
@@ -506,8 +497,8 @@ export default function ProductDetailPage() {
                 onClick={handleAddToCart}
                 disabled={!isInStock || cartLoading}
                 className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold transition-all ${isInStock
-                    ? 'bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white hover:from-[#7e4507] hover:to-[#8a6e5d] hover:shadow-lg transform hover:scale-105'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white hover:from-[#7e4507] hover:to-[#8a6e5d] hover:shadow-lg transform hover:scale-105'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
               >
                 {cartLoading ? (
@@ -522,8 +513,8 @@ export default function ProductDetailPage() {
                 onClick={handleToggleFavorite}
                 disabled={favoritesLoading}
                 className={`p-4 border-2 rounded-xl transition-all hover:scale-105 ${isFavorite(product.id)
-                    ? 'border-red-200 bg-red-50 text-red-600'
-                    : 'border-gray-300 bg-white text-gray-600 hover:border-red-300 hover:text-red-600'
+                  ? 'border-red-200 bg-red-50 text-red-600'
+                  : 'border-gray-300 bg-white text-gray-600 hover:border-red-300 hover:text-red-600'
                   }`}
               >
                 {favoritesLoading ? (

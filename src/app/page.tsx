@@ -4,104 +4,77 @@ import { Star, ShoppingBag, Heart, ArrowRight, Sparkles, Crown, Gem } from 'luci
 import ProductCard from '@/components/ProductCard';
 import CategoryCard from '@/components/CategoryCard';
 import { Product, Category } from '@/types';
+import { client } from '@/lib/utils/shopify';
 
 
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [products, setProducts] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true);
 
-  const featuredProducts = [
-    {
-      id: '1',
-      name: 'Moisture Rich Shampoo',
-      slug: 'moisture-rich-shampoo',
-      price: 29.99,
-      description: 'Hydrating shampoo for natural hair with organic botanicals',
-      image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=600&q=80',
-      category: 'hair-care',
-      stock: 50,
-      rating: 4.8,
-      reviews: 0,
-      inStock: true,
-      sku: 'MRSHAMPOO-001',
-      brand: 'Locd Essence'
-    },
-    {
-      id: '2',
-      name: 'Curl Defining Cream',
-      slug: 'curl-defining-cream',
-      price: 49.99,
-      description: 'Perfect definition for your curls with long-lasting hold',
-      image: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80',
-      category: 'styling',
-      stock: 30,
-      rating: 4.9,
-      reviews: 0,
-      inStock: true,
-      sku: 'CURLCREAM-002',
-      brand: 'Locd Essence'
-    },
-    {
-      id: '3',
-      name: 'Scalp Treatment Oil',
-      slug: 'scalp-treatment-oil',
-      price: 19.99,
-      description: 'Nourishing oil blend for optimal scalp health',
-      image: 'https://images.unsplash.com/photo-1595341595379-cf0ff033ce7b?auto=format&fit=crop&w=600&q=80',
-      category: 'scalp-care',
-      stock: 45,
-      rating: 4.7,
-      reviews: 0,
-      inStock: true,
-      sku: 'SCALPOIL-003',
-      brand: 'Locd Essence'
-    },
-    {
-      id: '4',
-      name: 'Golden Hair Crown',
-      slug: 'golden-hair-crown',
-      price: 89.99,
-      description: 'Handcrafted golden hair jewelry for special occasions',
-      image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80',
-      category: 'jewelry',
-      stock: 15,
-      rating: 5.0,
-      reviews: 0,
-      inStock: true,
-      sku: 'GOLDCROWN-004',
-      brand: 'Locd Essence'
-    },
-    {
-      id: '5',
-      name: 'Beaded Hair Clips Set',
-      slug: 'beaded-hair-clips-set',
-      price: 34.99,
-      description: 'Set of 6 African-inspired beaded hair accessories',
-      image: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&w=600&q=80',
-      category: 'accessories',
-      stock: 25,
-      rating: 4.8,
-      reviews: 0,
-      inStock: true,
-      sku: 'BEADCLIPS-005',
-      brand: 'Locd Essence'
-    },
-    {
-      id: '6',
-      name: 'Statement Earrings',
-      slug: 'statement-earrings',
-      price: 65.99,
-      description: 'Bold brass earrings celebrating African heritage',
-      image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?auto=format&fit=crop&w=600&q=80',
-      category: 'jewelry',
-      stock: 20,
-      rating: 4.9,
-      reviews: 0,
-      inStock: true,
-      sku: 'STMEARRINGS-006',
-      brand: 'Locd Essence'
-    },
-  ];
+  const fetchProducts = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+
+      const response = await client.request(`
+          {
+            products(first: 100) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  description
+                  productType
+                  featuredImage {
+                    url(transform: { maxWidth: 400, maxHeight: 400 })
+                    altText
+                  }
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        quantityAvailable
+                      }
+                    }
+                  }
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                    maxVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `);
+
+      setProducts(response.data.products?.edges || []);
+    } catch (err: any) {
+      console.error('Error fetching products:', err);
+      setError(err.message || 'Failed to fetch products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+
 
   const categories = [
     {
@@ -126,24 +99,24 @@ export default function Home() {
 
   const testimonials = [
     {
-      name: "Austin M.",
+      name: "Annie M.",
       location: "Nakuru, Kenya",
       text: "The curl cream transformed my hair! And the golden hair crown made me feel like royalty at my wedding.",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      avatar: "https://plus.unsplash.com/premium_photo-1745624797647-37ddb5c77b65?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlciUyMHByb2ZpbGUlMjBhZnJpY2FuJTIwd29tZW58ZW58MHx8MHx8fDA%3D",
       rating: 5
     },
     {
-      name: "Tasha Williams",
+      name: "Tasha W",
       location: "Lagos, Nigeria",
       text: "Finally found products that work with my 4C hair. The jewelry pieces are absolutely stunning!",
-      avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+      avatar: "https://images.unsplash.com/photo-1744040866587-e3ac6dcde112?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHVzZXIlMjBwcm9maWxlJTIwYWZyaWNhbiUyMHdvbWVufGVufDB8fDB8fHww",
       rating: 5
     },
     {
-      name: "Keisha Brown",
+      name: "Keisha B",
       location: "Houston, TX",
       text: "The quality is unmatched. From hair care to jewelry, everything exceeds expectations!",
-      avatar: "https://randomuser.me/api/portraits/women/33.jpg",
+      avatar: "https://images.unsplash.com/photo-1602177281687-c8900253495b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHVzZXIlMjBwcm9maWxlJTIwYWZyaWNhbiUyMHdvbWVufGVufDB8fDB8fHww",
       rating: 5
     }
   ];
@@ -270,9 +243,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products with Enhanced Grid */}
+
+      {/* Products Grid */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-6">
+          {/* Section Header */}
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/10 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
               Bestsellers
@@ -284,16 +259,52 @@ export default function Home() {
               Discover our most loved hair care products and jewelry pieces
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+
+          {/* Product Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.map((edge) => {
+              const product = edge.node;
+              const firstVariant = product.variants?.edges?.[0]?.node;
+              const price =
+                firstVariant?.price?.amount ||
+                product.priceRange?.minVariantPrice?.amount ||
+                0;
+              const stock = firstVariant?.quantityAvailable ?? 0;
+
+              return (
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    id: product.id,
+                    title: product.title,
+                    handle: product.handle,
+                    name: product.title,
+                    description: product.description,
+                    price: price,
+                    discount: 0,
+                    image: product.featuredImage?.url || '',
+                    altText: product.featuredImage?.altText || product.title,
+                    brand: product.productType,
+                    variants: product.variants,
+                    inStock: stock > 0,
+                    stock: stock,
+                    rating: 4,
+                    reviews: 0,
+                    isNew: false,
+                    slug: product.handle,
+                    category: product.productType || '',
+                    sku: firstVariant?.id || product.id,
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       </section>
 
+
       {/* Enhanced Categories */}
-      <section className="py-20 bg-gray-900">
+      < section className="py-20 bg-gray-900" >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/20 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
@@ -312,10 +323,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Enhanced Testimonials */}
-      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+      < section className="py-20 bg-gradient-to-b from-white to-gray-50" >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/10 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
@@ -354,10 +365,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Enhanced Hair Care Tips */}
-      <section className="py-20 bg-gradient-to-r from-[#8a6e5d]/5 via-[#a38776]/5 to-[#8a6e5d]/5">
+      < section className="py-20 bg-gradient-to-r from-[#8a6e5d]/5 via-[#a38776]/5 to-[#8a6e5d]/5" >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/10 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
@@ -384,10 +395,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Enhanced Meet the Creator */}
-      <section className="py-20 bg-gray-900 text-white relative overflow-hidden">
+      < section className="py-20 bg-gray-900 text-white relative overflow-hidden" >
         <div className="absolute inset-0 bg-gradient-to-r from-[#8a6e5d]/10 to-transparent" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -427,7 +438,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       <style jsx>{`
         @keyframes scroll {
@@ -444,6 +455,6 @@ export default function Home() {
           overflow: hidden;
         }
       `}</style>
-    </div>
+    </div >
   );
 }
