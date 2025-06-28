@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
+import { useFavorites } from '@/context/FavoritesContext';
 
 type ProductCardProps = {
   product: Product;
@@ -15,7 +16,8 @@ type ProductCardProps = {
 export default function ProductCard({ product }: ProductCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { addToCart, loading } = useCart();
+  const { addToCart, loading: cartLoading } = useCart();
+  const { addToFavorites, removeFromFavorites, isFavorite, loading: favoritesLoading } = useFavorites();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -29,25 +31,39 @@ export default function ProductCard({ product }: ProductCardProps) {
     ? product.price / (1 - discount / 100)
     : product.price;
 
+  // Create the product URL using handle
+  const productUrl = `/products/${product.handle}`;
+
   const handleAddToCart = async () => {
     try {
       await addToCart({
-        id: product.id, // This will be replaced by Shopify's line item ID
-        variantId: product.variants.edges[0].node.id, // The actual product variant ID
-        name: product.title,
+        id: product.id,
+        variantId: product.variants?.edges?.[0]?.node?.id || '',
+        name: product.title || product.name,
         price: product.price,
-        image: product.featuredImage?.url || '',
+        image: product.featuredImage?.url || product.image || '',
       });
     } catch (error) {
-      // Handle error (maybe show a toast notification)
       console.error('Failed to add to cart:', error);
     }
   };
 
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isFavorite(product.id)) {
+      removeFromFavorites(product.id);
+    } else {
+      addToFavorites(product);
+    }
+  };
+
+  const isProductFavorite = isFavorite(product.id);
 
   return (
     <div 
-      className="group relative bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-amber-200"
+      className="group relative bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-[#7e4507]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -64,37 +80,53 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
         {product.stock <= 5 && product.stock > 0 && (
-          <span className="px-3 py-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-semibold rounded-full shadow-lg">
+          <span className="px-3 py-1 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white text-xs font-semibold rounded-full shadow-lg">
             Only {product.stock} left
           </span>
         )}
       </div>
 
       {/* Wishlist Button */}
-      <button className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 group/heart">
-        <svg 
-          className={`w-5 h-5 transition-all duration-200 ${
-            isHovered ? 'text-red-500 fill-red-500' : 'text-gray-400'
-          } group-hover/heart:text-red-500 group-hover/heart:fill-red-500`}
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
-          />
-        </svg>
+      <button 
+        onClick={handleToggleFavorite}
+        disabled={favoritesLoading}
+        className={`absolute top-4 right-4 z-10 w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 group/heart ${
+          isProductFavorite 
+            ? 'bg-red-50 border border-red-200' 
+            : 'bg-white/90 hover:bg-white'
+        }`}
+      >
+        {favoritesLoading ? (
+          <div className="w-4 h-4 border-2 border-gray-200 border-t-red-500 rounded-full animate-spin"></div>
+        ) : (
+          <svg 
+            className={`w-5 h-5 transition-all duration-200 ${
+              isProductFavorite 
+                ? 'text-red-500 fill-red-500' 
+                : isHovered 
+                  ? 'text-red-500 fill-red-500' 
+                  : 'text-gray-400'
+            } group-hover/heart:text-red-500 group-hover/heart:fill-red-500`}
+            fill={isProductFavorite ? 'currentColor' : 'none'} 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+            />
+          </svg>
+        )}
       </button>
 
       {/* Product Image */}
-      <Link href={`/products/${product.slug}`} className="block">
+      <Link href={productUrl} className="block">
         <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
           <Image
-            src={product.image}
-            alt={product.altText}
+            src={product.image || product.featuredImage?.url || '/placeholder-product.jpg'}
+            alt={product.altText || product.title || product.name}
             fill
             className={`object-cover transition-all duration-700 group-hover:scale-110 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
@@ -129,9 +161,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-sm text-amber-600 font-medium mb-2">{product.brand}</p>
         
         {/* Product Name */}
-        <Link href={`/products/${product.slug}`}>
+        <Link href={productUrl}>
           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-amber-600 transition-colors">
-            {product.name}
+            {product.name || product.title}
           </h3>
         </Link>
 
@@ -185,16 +217,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Add to Cart Button */}
         <button 
-        onClick={handleAddToCart}
-        className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 ${
-          product.inStock
-            ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 hover:shadow-lg transform hover:scale-105'
-            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-        }`}
-        disabled={!product.inStock || loading}
-      >
-        {loading ? 'Adding...' : (product.inStock ? 'Add to Cart' : 'Out of Stock')}
-      </button>
+          onClick={handleAddToCart}
+          className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 ${
+            product.inStock
+              ? 'bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white hover:from-[#7e4507] hover:to-[#8a6e5d] hover:shadow-lg transform hover:scale-105'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+          }`}
+          disabled={!product.inStock || cartLoading}
+        >
+          {cartLoading ? 'Adding...' : (product.inStock ? 'Add to Cart' : 'Out of Stock')}
+        </button>
 
         {/* Quick Actions */}
         <div className="flex gap-2 mt-3">
@@ -208,7 +240,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Hover Animation Line */}
-      <div className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-300 ${
+      <div className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] transition-all duration-300 ${
         isHovered ? 'w-full' : 'w-0'
       }`}></div>
     </div>

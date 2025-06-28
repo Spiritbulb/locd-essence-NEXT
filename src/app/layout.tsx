@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { CartProvider } from '../context/CartContext'
 import { AuthProvider } from '../context/AuthContext'
+import { FavoritesProvider } from '@/context/FavoritesContext'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -27,11 +28,13 @@ export default function RootLayout({
       <body className={`${inter.className} flex flex-col w-full min-h-screen`}>
         <AuthProvider>
           <CartProvider>
+            <FavoritesProvider>
             <Navbar />
             <main className="w-full mx-auto py-8">
               {children}
             </main>
             <Footer />
+            </FavoritesProvider>
           </CartProvider>
         </AuthProvider>
       </body>

@@ -36,6 +36,7 @@ export default function ProductsPage() {
               node {
                 id
                 title
+                handle
                 description
                 productType
                 featuredImage {
@@ -283,6 +284,7 @@ export default function ProductsPage() {
                   product={{
                     id: product.id,
                     title: product.title,
+                    handle: product.handle,
                     name: product.title,
                     description: product.description,
                     price: price,
@@ -296,7 +298,7 @@ export default function ProductsPage() {
                     rating: 4, // Default rating (Shopify doesn't provide this by default)
                     reviews: 0, // Default reviews count
                     isNew: false, // You can add logic to determine if product is new
-                    slug: product.handle || product.id, // Use handle if available, fallback to ID
+                    slug: product.handle, 
                     category: product.productType || '', // Added category property
                     sku: firstVariant?.id || product.id // Added sku property (using variant id or fallback to product id)
                   }}

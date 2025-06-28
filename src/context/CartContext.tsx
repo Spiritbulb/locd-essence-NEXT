@@ -21,6 +21,8 @@ interface CartContextType {
   addToCart: (item: Omit<CartItem, 'quantity'>) => Promise<void>;
   removeFromCart: (id: string) => Promise<void>;
   updateQuantity: (id: string, quantity: number) => Promise<void>;
+  refreshCart: () => void;
+  updateCartLine: (lineId: string, newQuantity: number) => Promise<void>;
   cartTotal: number;
   itemCount: number;
   cartId: string | null;
@@ -309,6 +311,60 @@ useEffect(() => {
     0
   );
 
+  // Refresh cart from Shopify
+  const refreshCart = useCallback(async () => {
+    try {
+      if (!cartId) return;
+      const query = `
+        query getCart($cartId: ID!) {
+          cart(id: $cartId) {
+            id
+            lines(first: 100) {
+              edges {
+                node {
+                  id
+                  quantity
+                  merchandise {
+                    ... on ProductVariant {
+                      id
+                      product {
+                        title
+                        featuredImage {
+                          url
+                        }
+                      }
+                      price {
+                        amount
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+      const variables = { cartId };
+      const data = await shopifyFetch(query, variables);
+      const refreshedItems = data.cart.lines.edges.map((edge: any) => ({
+        id: edge.node.id,
+        variantId: edge.node.merchandise.id,
+        name: edge.node.merchandise.product.title,
+        price: parseFloat(edge.node.merchandise.price.amount),
+        quantity: edge.node.quantity,
+        image: edge.node.merchandise.product.featuredImage?.url || ''
+      }));
+      setCartItems(refreshedItems);
+    } catch (err) {
+      console.error('Failed to refresh cart:', err);
+    }
+  }, [cartId]);
+
+  // Update a specific cart line's quantity
+  const updateCartLine = async (lineId: string, newQuantity: number) => {
+    await updateQuantity(lineId, newQuantity);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -316,6 +372,8 @@ useEffect(() => {
         addToCart,
         removeFromCart,
         updateQuantity,
+        refreshCart,
+        updateCartLine,
         cartTotal,
         itemCount,
         cartId,

@@ -20,12 +20,26 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6 group">
-              <div>
+              {/* Logo */}
+            <div className="flex items-center">
+              <button className="flex items-center group transition-all duration-300 hover:scale-105">
+                <div className="flex items-center gap-3">
+                  <div>
+                    <img
+                      src="/logoloc.png"
+                      alt="Loc'd Essence Logo"
+                      className="h-16 w-auto object-contain"
+                    />
+                  </div>
+                   <div>
                 <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
                   Loc'd Essence
                 </span>
                 <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
               </div>
+                </div>
+              </button>
+            </div>
             </div>
             <p className="text-gray-600 leading-relaxed mb-6">
               Celebrating natural beauty and authentic style with premium hair care, stunning jewelry, and beauty essentials that enhance your unique essence.

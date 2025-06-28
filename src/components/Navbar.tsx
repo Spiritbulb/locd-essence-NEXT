@@ -18,7 +18,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [authMessage, setAuthMessage] = useState('');
-  const [authMode, setAuthMode] = useState('signin'); // 'signin', 'signup', or 'recover'
+  const [authMode, setAuthMode] = useState('signin'); 
   const { customer, loginWithPassword, createCustomer, recoverCustomerAccount, logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -45,34 +45,61 @@ const Navbar = ({ cartItemsCount = 0 }) => {
     setAuthMessage('');
   };
 
-  const handleAuthSubmit = async (e) => {
+  interface AuthFormEvent extends React.FormEvent<HTMLFormElement> {}
+
+  interface RecoverResult {
+    success: boolean;
+    error?: string;
+    message?: string;
+  }
+
+  interface CreateCustomerParams {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  }
+
+  interface CreateCustomerResult {
+    success: boolean;
+    error?: string;
+  }
+
+  interface LoginResult {
+    success: boolean;
+    error?: string;
+  }
+
+  type AuthMode = 'signin' | 'signup' | 'recover';
+
+  const handleAuthSubmit = async (e: AuthFormEvent) => {
     e.preventDefault();
-    
+
     if (authMode === 'recover') {
-      const { success, error, message } = await recoverCustomerAccount(email);
-      setAuthMessage(success ? message : error || 'Error sending recovery email');
+      const { success, error, message }: RecoverResult = await recoverCustomerAccount(email);
+      setAuthMessage(success ? message! : error || 'Error sending recovery email');
     } else if (authMode === 'signup') {
       // Validate passwords match
       if (password !== confirmPassword) {
         setAuthMessage('Passwords do not match');
         return;
       }
-      
+
       // Validate password strength (optional)
       if (password.length < 6) {
         setAuthMessage('Password must be at least 6 characters long');
         return;
       }
-      
-      const { success, error } = await createCustomer({
+
+      const { success, error }: CreateCustomerResult = await createCustomer({
         firstName,
         lastName,
         email,
         password
-      });
-      
+      } as CreateCustomerParams);
+
       setAuthMessage(success ? 'Account created successfully!' : error || 'Sign up failed');
-      
+
       if (success) {
         setTimeout(() => {
           setIsAuthOpen(false);
@@ -80,9 +107,9 @@ const Navbar = ({ cartItemsCount = 0 }) => {
         }, 1500);
       }
     } else {
-      const { success, error } = await loginWithPassword(email, password);
+      const { success, error }: LoginResult = await loginWithPassword(email, password);
       setAuthMessage(success ? 'Login successful!' : error || 'Login failed');
-      
+
       if (success) {
         setTimeout(() => {
           setIsAuthOpen(false);
@@ -98,7 +125,16 @@ const Navbar = ({ cartItemsCount = 0 }) => {
     { href: '/about', label: 'Our Story' },
   ];
 
-  const isLinkActive = (href) => {
+  interface NavigationLink {
+    href: string;
+    label: string;
+  }
+
+  interface NavbarProps {
+    cartItemsCount?: number;
+  }
+
+  const isLinkActive = (href: string): boolean => {
     if (href === '/') {
       return pathname === href;
     }
@@ -135,12 +171,17 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                 <div className="flex items-center gap-3">
                   <div>
                     <img
-                      src="/locd.png"
+                      src="/logoloc.png"
                       alt="Loc'd Essence Logo"
-                      className="h-7 w-auto object-contain bg-transparent"
+                      className="h-16 w-auto object-contain"
                     />
                   </div>
-                  <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
+                   <div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
+                  Loc'd Essence
+                </span>
+                <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
+              </div>
                 </div>
               </button>
             </div>
@@ -157,9 +198,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
                     }`}
                 >
                   {link.label}
-                  {isLinkActive(link.href) && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#8a6e5d] rounded-full"></div>
-                  )}
+                  {isLinkActive(link.href)}
                 </a>
               ))}
             </div>
