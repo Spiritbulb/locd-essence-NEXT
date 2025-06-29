@@ -6,22 +6,73 @@ import CategoryCard from '@/components/CategoryCard';
 import { Product, Category } from '@/types';
 import { client } from '@/lib/utils/shopify';
 
-
-
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [products, setProducts] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null)
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [collectionsLoading, setCollectionsLoading] = useState(true);
 
-  const fetchProducts = async () => {
+  // Fetch Featured Collection Products
+  const fetchFeaturedProducts = async () => {
     try {
       setError(null);
       setLoading(true);
 
       const response = await client.request(`
+        {
+          collection(handle: "featured") {
+            id
+            title
+            products(first: 8) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  description
+                  productType
+                  featuredImage {
+                    url(transform: { maxWidth: 400, maxHeight: 400 })
+                    altText
+                  }
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        quantityAvailable
+                      }
+                    }
+                  }
+                  priceRange {
+                    minVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                    maxVariantPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `);
+
+      if (response.data.collection) {
+        setFeaturedProducts(response.data.collection.products?.edges || []);
+      } else {
+        // Fallback to all products if Featured collection doesn't exist
+        const fallbackResponse = await client.request(`
           {
-            products(first: 100) {
+            products(first: 8) {
               edges {
                 node {
                   id
@@ -60,42 +111,70 @@ export default function Home() {
             }
           }
         `);
-
-      setProducts(response.data.products?.edges || []);
+        setFeaturedProducts(fallbackResponse.data.products?.edges || []);
+      }
     } catch (err: any) {
-      console.error('Error fetching products:', err);
-      setError(err.message || 'Failed to fetch products');
+      console.error('Error fetching featured products:', err);
+      setError(err.message || 'Failed to fetch featured products');
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch Collections for Category Section
+  const fetchCollections = async () => {
+    try {
+      setCollectionsLoading(true);
+
+      const response = await client.request(`
+        {
+          collections(first: 10) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                image {
+                  url(transform: { maxWidth: 600, maxHeight: 400 })
+                  altText
+                }
+                products(first: 1) {
+                  edges {
+                    node {
+                      id
+                      priceRange {
+                        minVariantPrice {
+                          amount
+                          currencyCode
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `);
+
+      // Filter out the Featured collection from the category section
+      const filteredCollections = response.data.collections?.edges.filter(
+        (edge: any) => edge.node.handle !== 'featured'
+      ) || [];
+
+      setCollections(filteredCollections.slice(0, 3)); // Show max 3 collections
+    } catch (err: any) {
+      console.error('Error fetching collections:', err);
+    } finally {
+      setCollectionsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchProducts();
+    fetchFeaturedProducts();
+    fetchCollections();
   }, []);
-
-
-
-  const categories = [
-    {
-      id: '1',
-      name: 'Hair Care Essentials',
-      image: 'https://images.unsplash.com/photo-1608248543803-ba9f8a322136?auto=format&fit=crop&w=600&q=80',
-      description: 'Premium products for your daily hair care routine',
-    },
-    {
-      id: '2',
-      name: 'Luxury Jewelry',
-      image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80',
-      description: 'Handcrafted pieces that celebrate your beauty',
-    },
-    {
-      id: '3',
-      name: 'Hair Accessories',
-      image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=600&q=80',
-      description: 'Beautiful accessories to complete your look',
-    },
-  ];
 
   const testimonials = [
     {
@@ -153,7 +232,7 @@ export default function Home() {
   }, []);
 
   const scrollingItems = [
-    { text: "Free Shipping on Orders Over $50", icon: "🚚" },
+    { text: "Free Shipping on Orders Over KSh5000", icon: "🚚" },
     { text: "30-Day Money Back Guarantee", icon: "💰" },
     { text: "100% Natural Ingredients", icon: "🌿" },
     { text: "Handcrafted with Love in Kenya", icon: "🇰🇪" },
@@ -243,8 +322,7 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* Products Grid */}
+      {/* Featured Products Grid */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
@@ -260,51 +338,83 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Product Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((edge) => {
-              const product = edge.node;
-              const firstVariant = product.variants?.edges?.[0]?.node;
-              const price =
-                firstVariant?.price?.amount ||
-                product.priceRange?.minVariantPrice?.amount ||
-                0;
-              const stock = firstVariant?.quantityAvailable ?? 0;
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#8a6e5d]"></div>
+              <p className="mt-4 text-gray-600">Loading featured products...</p>
+            </div>
+          )}
 
-              return (
-                <ProductCard
-                  key={product.id}
-                  product={{
-                    id: product.id,
-                    title: product.title,
-                    handle: product.handle,
-                    name: product.title,
-                    description: product.description,
-                    price: price,
-                    discount: 0,
-                    image: product.featuredImage?.url || '',
-                    altText: product.featuredImage?.altText || product.title,
-                    brand: product.productType,
-                    variants: product.variants,
-                    inStock: stock > 0,
-                    stock: stock,
-                    rating: 4,
-                    reviews: 0,
-                    isNew: false,
-                    slug: product.handle,
-                    category: product.productType || '',
-                    sku: firstVariant?.id || product.id,
-                  }}
-                />
-              );
-            })}
-          </div>
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-16">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+                <p className="text-red-800 font-medium">Failed to load products</p>
+                <p className="text-red-600 text-sm mt-2">{error}</p>
+                <button 
+                  onClick={fetchFeaturedProducts}
+                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Product Cards Grid */}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {featuredProducts.map((edge) => {
+                const product = edge.node;
+                const firstVariant = product.variants?.edges?.[0]?.node;
+                const price =
+                  firstVariant?.price?.amount ||
+                  product.priceRange?.minVariantPrice?.amount ||
+                  0;
+                const stock = firstVariant?.quantityAvailable ?? 0;
+
+                return (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      id: product.id,
+                      title: product.title,
+                      handle: product.handle,
+                      name: product.title,
+                      description: product.description,
+                      price: parseFloat(price),
+                      discount: 0,
+                      image: product.featuredImage?.url || '',
+                      altText: product.featuredImage?.altText || product.title,
+                      brand: product.productType,
+                      variants: product.variants,
+                      inStock: stock > 0,
+                      stock: stock,
+                      rating: 4,
+                      reviews: 0,
+                      isNew: false,
+                      slug: product.handle,
+                      category: product.productType || '',
+                      sku: firstVariant?.id || product.id,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* No Products State */}
+          {!loading && !error && featuredProducts.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-gray-600">No featured products available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
 
-
-      {/* Enhanced Categories */}
-      < section className="py-20 bg-gray-900" >
+      {/* Collections Categories */}
+      <section className="py-20 bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/20 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
@@ -317,16 +427,55 @@ export default function Home() {
               From hair care essentials to statement jewelry pieces
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {categories.map(category => (
-              <CategoryCard key={category.id} product={category} />
-            ))}
-          </div>
+
+          {/* Collections Loading State */}
+          {collectionsLoading && (
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#8a6e5d]"></div>
+              <p className="mt-4 text-gray-300">Loading collections...</p>
+            </div>
+          )}
+
+          {/* Collections Grid */}
+          {!collectionsLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {collections.map((edge) => {
+                const collection = edge.node;
+                const firstProduct = collection.products?.edges?.[0]?.node;
+                const startingPrice = firstProduct?.priceRange?.minVariantPrice?.amount || 0;
+
+                return (
+                  <CategoryCard 
+                    key={collection.id} 
+                    product={{
+                      id: collection.id,
+                      name: collection.title,
+                      title: collection.title,
+                      handle: collection.handle,
+                      description: collection.description || `Explore our ${collection.title} collection`,
+                      image: collection.image?.url || 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80',
+                      altText: collection.image?.altText || collection.title,
+                      price: parseFloat(startingPrice),
+                      slug: collection.handle,
+                      category: collection.title,
+                    }} 
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* No Collections State */}
+          {!collectionsLoading && collections.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-gray-300">No collections available at the moment.</p>
+            </div>
+          )}
         </div>
-      </section >
+      </section>
 
       {/* Enhanced Testimonials */}
-      < section className="py-20 bg-gradient-to-b from-white to-gray-50" >
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/10 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
@@ -365,10 +514,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Enhanced Hair Care Tips */}
-      < section className="py-20 bg-gradient-to-r from-[#8a6e5d]/5 via-[#a38776]/5 to-[#8a6e5d]/5" >
+      <section className="py-20 bg-gradient-to-r from-[#8a6e5d]/5 via-[#a38776]/5 to-[#8a6e5d]/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-2 bg-[#8a6e5d]/10 rounded-full text-[#8a6e5d] text-sm font-medium mb-4">
@@ -395,10 +544,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Enhanced Meet the Creator */}
-      < section className="py-20 bg-gray-900 text-white relative overflow-hidden" >
+      <section className="py-20 bg-gray-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#8a6e5d]/10 to-transparent" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -438,7 +587,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       <style jsx>{`
         @keyframes scroll {
@@ -455,6 +604,6 @@ export default function Home() {
           overflow: hidden;
         }
       `}</style>
-    </div >
+    </div>
   );
 }

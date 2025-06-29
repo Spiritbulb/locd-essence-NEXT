@@ -139,6 +139,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
   const navigationLinks = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
+    { href: '/collections', label: 'Collections'},
     { href: '/about', label: 'Our Story' },
   ];
 
