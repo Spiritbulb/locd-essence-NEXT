@@ -181,7 +181,7 @@ export default function CartPage() {
           <div className="grid lg:grid-cols-12 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200/50 overflow-hidden">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200/50">
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900">
@@ -200,7 +200,7 @@ export default function CartPage() {
                       <div className="flex gap-6">
                         {/* Product Image */}
                         <div className="relative">
-                          <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300">
+                          <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl shadow-sm group-hover:shadow-md transition-all duration-300">
                             <img
                               src={item.image || '/api/placeholder/200/200'}
                               alt={item.name}
@@ -279,7 +279,7 @@ export default function CartPage() {
             {/* Order Summary */}
             <div className="lg:col-span-4">
               <div className="sticky top-24">
-                <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200/50 overflow-hidden">
+                <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200/50">
                   <div className="p-6 border-b border-gray-100">
                     <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
                       <div className="w-8 h-8 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] rounded-lg flex items-center justify-center">

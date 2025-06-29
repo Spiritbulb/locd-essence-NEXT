@@ -139,7 +139,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
   const navigationLinks = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
-    { href: '/collections', label: 'Collections'},
+    { href: '/collections', label: 'Collections' },
     { href: '/about', label: 'Our Story' },
   ];
 
@@ -183,7 +183,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
             ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/50'
             : 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100/50'
           }`}
-          
+
       >
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex justify-between items-center py-3">
@@ -492,17 +492,17 @@ const Navbar = ({ cartItemsCount = 0 }) => {
             {/* Mobile Actions */}
             <div className="flex items-center justify-between mb-6 px-2">
               <button
-                onClick={() => router.push('/favourites')}
+                onClick={() => { router.push('/favourites'); closeMenus(); }}
                 className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300"
               >
                 <Heart className="w-5 h-5" />
               </button>
               <button
-                onClick={() => router.push('/cart')}
+                onClick={() => { router.push('/cart'); closeMenus(); }}
                 className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-[#8a6e5d] hover:bg-[#8a6e5d]/10 rounded-xl transition-all duration-300"
               >
                 <ShoppingCart className="w-5 h-5" />
-                <span className="text-sm">Cart ({cartItemsCount})</span>
+                <span className="text-sm">({cartItemsCount})</span>
               </button>
             </div>
 
@@ -664,7 +664,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
           </div>
         </div>
 
-        
+
       </nav>
 
       {/* Backdrop for auth dropdown */}

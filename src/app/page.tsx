@@ -5,6 +5,7 @@ import ProductCard from '@/components/ProductCard';
 import CategoryCard from '@/components/CategoryCard';
 import { Product, Category } from '@/types';
 import { client } from '@/lib/utils/shopify';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -13,6 +14,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
+  const router = useRouter();
 
   // Fetch Featured Collection Products
   const fetchFeaturedProducts = async () => {
@@ -287,7 +289,10 @@ export default function Home() {
                   <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed max-w-xl">
                     {slide.subtitle}
                   </p>
-                  <button className="px-8 py-4 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white rounded-full font-semibold text-lg hover:from-[#7e4507] hover:to-[#8a6e5d] transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center gap-3">
+                  <button
+                    className="px-8 py-4 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white rounded-full font-semibold text-lg hover:from-[#7e4507] hover:to-[#8a6e5d] transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 flex items-center gap-3"
+                    onClick={() => router.push('/collections/featured')}
+                  >
                     {slide.buttonText}
                     <ArrowRight className="w-5 h-5" />
                   </button>
@@ -352,7 +357,7 @@ export default function Home() {
               <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
                 <p className="text-red-800 font-medium">Failed to load products</p>
                 <p className="text-red-600 text-sm mt-2">{error}</p>
-                <button 
+                <button
                   onClick={fetchFeaturedProducts}
                   className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
@@ -445,8 +450,8 @@ export default function Home() {
                 const startingPrice = firstProduct?.priceRange?.minVariantPrice?.amount || 0;
 
                 return (
-                  <CategoryCard 
-                    key={collection.id} 
+                  <CategoryCard
+                    key={collection.id}
                     product={{
                       id: collection.id,
                       name: collection.title,
@@ -458,7 +463,7 @@ export default function Home() {
                       price: parseFloat(startingPrice),
                       slug: collection.handle,
                       category: collection.title,
-                    }} 
+                    }}
                   />
                 );
               })}
@@ -569,7 +574,10 @@ export default function Home() {
                   From premium hair care products formulated for natural textures to stunning jewelry pieces that tell our stories, every item is chosen with intention and crafted with love.
                 </p>
               </div>
-              <button className="mt-8 px-8 py-4 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white rounded-full font-semibold text-lg hover:from-[#7e4507] hover:to-[#8a6e5d] transition-all duration-300 shadow-2xl transform hover:-translate-y-1 flex items-center gap-3">
+              <button
+                className="mt-8 px-8 py-4 bg-gradient-to-r from-[#8a6e5d] to-[#7e4507] text-white rounded-full font-semibold text-lg hover:from-[#7e4507] hover:to-[#8a6e5d] transition-all duration-300 shadow-2xl transform hover:-translate-y-1 flex items-center gap-3"
+                onClick={() => router.push('/about')}
+              >
                 Join Our Community
                 <ArrowRight className="w-5 h-5" />
               </button>
