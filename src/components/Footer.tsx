@@ -17,6 +17,39 @@ export default function Footer() {
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 mb-6">
 
+          {/* Brand Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4 group">
+              <button className="flex items-center group transition-all duration-300 hover:scale-105 padding-4">
+                <img src="/logoloc.png" alt="Loc'd Essence Logo" className="h-14 w-auto object-contain" />
+                <div>
+                  <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
+                    Loc'd Essence
+                  </span>
+                  <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
+                </div>
+              </button>
+            </div>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">
+              Celebrating natural beauty and authentic style with premium hair care, stunning jewelry, and beauty essentials that enhance your unique essence.
+            </p>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2 text-gray-600 hover:text-[#8a6e5d] transition-colors duration-300 group">
+                <Mail className="w-4 h-4 text-[#8a6e5d]" />
+                hello@locdessence.com
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 hover:text-[#8a6e5d] transition-colors duration-300 group">
+                <Phone className="w-4 h-4 text-[#8a6e5d]" />
+                +254 707098169
+              </div>
+              <div className="flex items-center gap-2 text-gray-600 hover:text-[#8a6e5d] transition-colors duration-300 group">
+                <MapPin className="w-4 h-4 text-[#8a6e5d]" />
+                Nakuru, KE
+              </div>
+            </div>
+          </div>
+
+
           {/* Shop Section */}
           <div>
             <h4 className="text-lg font-semibold text-gray-900 mb-4 relative">
@@ -113,37 +146,6 @@ export default function Footer() {
             </div>*/}
           </div>
 
-          {/* Brand Section */}
-          <div>
-            <div className="flex items-center gap-2 mb-4 group">
-              <button className="flex items-center group transition-all duration-300 hover:scale-105 padding-4">
-                <img src="/logoloc.png" alt="Loc'd Essence Logo" className="h-14 w-auto object-contain" />
-                <div>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-[#8a6e5d] via-[#a38776] to-[#7e4507] bg-clip-text text-transparent">
-                    Loc'd Essence
-                  </span>
-                  <div className="text-xs text-gray-500 -mt-1">Hair • Jewelry • Beauty</div>
-                </div>
-              </button>
-            </div>
-            <p className="text-gray-600 text-sm leading-relaxed mb-4">
-              Celebrating natural beauty and authentic style with premium hair care, stunning jewelry, and beauty essentials that enhance your unique essence.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-gray-600 hover:text-[#8a6e5d] transition-colors duration-300 group">
-                <Mail className="w-4 h-4 text-[#8a6e5d]" />
-                hello@locdessence.com
-              </div>
-              <div className="flex items-center gap-2 text-gray-600 hover:text-[#8a6e5d] transition-colors duration-300 group">
-                <Phone className="w-4 h-4 text-[#8a6e5d]" />
-                +254 707098169
-              </div>
-              <div className="flex items-center gap-2 text-gray-600 hover:text-[#8a6e5d] transition-colors duration-300 group">
-                <MapPin className="w-4 h-4 text-[#8a6e5d]" />
-                Nakuru, KE
-              </div>
-            </div>
-          </div>
         </div>
 
 
