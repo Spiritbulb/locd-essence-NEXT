@@ -75,7 +75,7 @@ interface CollectionData {
   };
 }
 
-export const runtime = 'edge';
+
 
 export default function CollectionDetailPage() {
   const params = useParams();

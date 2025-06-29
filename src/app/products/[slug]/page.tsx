@@ -67,7 +67,7 @@ interface ProductData {
   }[];
 }
 
-export const runtime = 'edge';
+
 
 export default function ProductDetailPage() {
   const params = useParams();

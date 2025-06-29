@@ -6,7 +6,7 @@ import { client } from '@/lib/utils/shopify';
 import CollectionsCard from '@/components/CollectionCard';
 import React from 'react';
 
-export const runtime = 'edge';
+
 
 export default function CollectionsPage() {
   const [collections, setCollections] = useState<any[]>([]);

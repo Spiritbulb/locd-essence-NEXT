@@ -9,7 +9,6 @@ import { Gem, Leaf, Sparkles, Shirt } from 'lucide-react'; // Example icons
 
 
 
-export const runtime = 'edge';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
