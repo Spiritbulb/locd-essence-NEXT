@@ -645,13 +645,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
           </div>
         </div>
 
-        {/* Backdrop for mobile menu */}
-        {isMobileMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
-            onClick={closeMenus}
-          />
-        )}
+        
       </nav>
 
       {/* Backdrop for auth dropdown */}
