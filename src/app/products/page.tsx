@@ -4,6 +4,12 @@ import { useEffect, useState } from 'react';
 import { Filter, Search, Heart, ShoppingCart, Star, Grid, List, ChevronDown, Loader2 } from 'lucide-react';
 import { client } from '@/lib/utils/shopify';
 import ProductCard from '@/components/ProductCard';
+import React from 'react';
+import { Gem, Leaf, Sparkles, Shirt } from 'lucide-react'; // Example icons
+
+
+
+export const runtime = 'edge';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -14,6 +20,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState('featured');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+
 
   const categories = ['All', 'Hair Care', 'Jewelry', 'Beauty Accessories'];
   const sortOptions = [
@@ -28,7 +35,7 @@ export default function ProductsPage() {
     try {
       setError(null);
       setLoading(true);
-      
+
       const response = await client.request(`
         {
           products(first: 100) {
@@ -182,19 +189,15 @@ export default function ProductsPage() {
             </p>
           </div>
 
-          {/* Search and Filters */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-8">
+          {/* Search and Filters */} <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-8">
             <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
+                <input type="text"
                   placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#8a6e5d]/20 focus:border-[#8a6e5d]/30 transition-all duration-300"
-                />
+                  value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#8a6e5d]/20 focus:border-[#8a6e5d]/30 transition-all duration-300" />
               </div>
 
               {/* Category Filter */}
@@ -203,11 +206,10 @@ export default function ProductsPage() {
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                      selectedCategory === category
-                        ? 'bg-[#8a6e5d] text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-700 hover:bg-[#8a6e5d]/10 hover:text-[#8a6e5d]'
-                    }`}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${selectedCategory === category
+                      ? 'bg-[#8a6e5d] text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-[#8a6e5d]/10 hover:text-[#8a6e5d]'
+                      }`}
                   >
                     {category}
                   </button>
@@ -234,21 +236,19 @@ export default function ProductsPage() {
                 <div className="flex bg-gray-100 rounded-xl p-1">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'grid'
-                        ? 'bg-white text-[#8a6e5d] shadow-sm'
-                        : 'text-gray-500 hover:text-[#8a6e5d]'
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'grid'
+                      ? 'bg-white text-[#8a6e5d] shadow-sm'
+                      : 'text-gray-500 hover:text-[#8a6e5d]'
+                      }`}
                   >
                     <Grid className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'list'
-                        ? 'bg-white text-[#8a6e5d] shadow-sm'
-                        : 'text-gray-500 hover:text-[#8a6e5d]'
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'list'
+                      ? 'bg-white text-[#8a6e5d] shadow-sm'
+                      : 'text-gray-500 hover:text-[#8a6e5d]'
+                      }`}
                   >
                     <List className="w-4 h-4" />
                   </button>
@@ -268,16 +268,15 @@ export default function ProductsPage() {
             <p className="text-gray-600">Try adjusting your search or filter criteria</p>
           </div>
         ) : (
-          <div className={`grid gap-6 ${
-            viewMode === 'grid' 
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-              : 'grid-cols-1 max-w-4xl mx-auto'
-          }`}>
+          <div className={`grid gap-6 ${viewMode === 'grid'
+            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+            : 'grid-cols-1 max-w-4xl mx-auto'
+            }`}>
             {filteredAndSortedProducts.map((product: any) => {
               const firstVariant = product.variants?.edges[0]?.node;
               const stock = firstVariant?.quantityAvailable || 0;
               const price = parseFloat(product.priceRange.minVariantPrice.amount);
-              
+
               return (
                 <ProductCard
                   key={product.id}
@@ -298,7 +297,7 @@ export default function ProductsPage() {
                     rating: 4, // Default rating (Shopify doesn't provide this by default)
                     reviews: 0, // Default reviews count
                     isNew: false, // You can add logic to determine if product is new
-                    slug: product.handle, 
+                    slug: product.handle,
                     category: product.productType || '', // Added category property
                     sku: firstVariant?.id || product.id // Added sku property (using variant id or fallback to product id)
                   }}
