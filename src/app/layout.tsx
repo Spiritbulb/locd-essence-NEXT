@@ -30,13 +30,13 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <FavoritesProvider>
-            <Navbar />
-            <NotificationProvider>
-            <main className="w-full mx-auto py-8">
-              {children}
-            </main>
-            </NotificationProvider>
-            <Footer />
+              <NotificationProvider>
+                <Navbar />
+                <main className="w-full mx-auto py-8">
+                  {children}
+                </main>
+                <Footer />
+              </NotificationProvider>
             </FavoritesProvider>
           </CartProvider>
         </AuthProvider>

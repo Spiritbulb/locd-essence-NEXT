@@ -67,10 +67,18 @@ const Notification = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onClose, 300); // Allow fade-out animation
+      const fadeOutTimer = setTimeout(onClose, 300); // Allow fade-out animation
+
+      // Store fadeOutTimer in a ref or variable to clear on cleanup
+      (Notification as any)._fadeOutTimer = fadeOutTimer;
     }, duration);
-    
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      if ((Notification as any)._fadeOutTimer) {
+        clearTimeout((Notification as any)._fadeOutTimer);
+      }
+    };
   }, [duration, onClose]);
 
   const baseClasses = `
