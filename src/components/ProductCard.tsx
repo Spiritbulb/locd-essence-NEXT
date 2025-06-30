@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useFavorites } from '@/context/FavoritesContext';
+import { useNotification } from '@/context/NotificationContext';
 
 type ProductCardProps = {
   product: Product;
@@ -18,11 +19,13 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart, loading: cartLoading } = useCart();
   const { addToFavorites, removeFromFavorites, isFavorite, loading: favoritesLoading } = useFavorites();
+  const { notify } = useNotification();
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-KE', {
       style: 'currency',
       currency: 'KES',
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -35,6 +38,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   const productUrl = `/products/${product.handle}`;
 
   const handleAddToCart = async () => {
+    if (!product.inStock) {
+      notify('This item is out of stock', 'error');
+      return;
+    }
+
     try {
       await addToCart({
         id: product.id,
@@ -43,19 +51,29 @@ export default function ProductCard({ product }: ProductCardProps) {
         price: product.price,
         image: product.featuredImage?.url || product.image || '',
       });
+    
+      notify(`${product.title || product.name} added to cart!`, 'success');
     } catch (error) {
       console.error('Failed to add to cart:', error);
+      notify('Failed to add item to cart', 'error');
     }
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (isFavorite(product.id)) {
-      removeFromFavorites(product.id);
-    } else {
-      addToFavorites(product);
+    try {
+      if (isFavorite(product.id)) {
+        await removeFromFavorites(product.id);
+        notify('Removed from favorites', 'info');
+      } else {
+        await addToFavorites(product);
+        notify('Added to favorites!', 'success');
+      }
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+      notify('Failed to update favorites', 'error');
     }
   };
 
@@ -148,7 +166,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
             isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
-            <button className="px-6 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-amber-50 transition-colors shadow-lg">
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                notify('Quick view feature coming soon!', 'info');
+              }}
+              className="px-6 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-amber-50 transition-colors shadow-lg"
+            >
               Quick View
             </button>
           </div>
@@ -158,7 +182,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product Info */}
       <div className="p-6">
         {/* Brand */}
-        <p className="text-sm text-amber-600 font-medium mb-2">{product.brand}</p>
+        {product.brand && (
+          <p className="text-sm text-amber-600 font-medium mb-2">{product.brand}</p>
+        )}
         
         {/* Product Name */}
         <Link href={productUrl}>
@@ -168,28 +194,30 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
 
         {/* Rating */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <svg
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(product.rating) 
-                    ? 'text-amber-400 fill-amber-400' 
-                    : i < product.rating 
+        {product.rating && (
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i < Math.floor(product.rating) 
                       ? 'text-amber-400 fill-amber-400' 
-                      : 'text-gray-200'
-                }`}
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
+                      : i < product.rating 
+                        ? 'text-amber-400 fill-amber-400' 
+                        : 'text-gray-200'
+                  }`}
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-sm text-gray-500">
+              {product.rating} ({product.reviews} reviews)
+            </span>
           </div>
-          <span className="text-sm text-gray-500">
-            {product.rating} ({product.reviews} reviews)
-          </span>
-        </div>
+        )}
 
         {/* Price */}
         <div className="flex items-center gap-2 mb-4">
@@ -225,15 +253,28 @@ export default function ProductCard({ product }: ProductCardProps) {
           }`}
           disabled={!product.inStock || cartLoading}
         >
-          {cartLoading ? 'Adding...' : (product.inStock ? 'Add to Cart' : 'Out of Stock')}
+          {cartLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Adding...
+            </div>
+          ) : (
+            product.inStock ? 'Add to Cart' : 'Out of Stock'
+          )}
         </button>
 
         {/* Quick Actions */}
         <div className="flex gap-2 mt-3">
-          <button className="flex-1 py-2 px-3 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <button 
+            onClick={() => notify('Quick view feature coming soon!', 'info')}
+            className="flex-1 py-2 px-3 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             Quick View
           </button>
-          <button className="flex-1 py-2 px-3 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <button 
+            onClick={() => notify('Compare feature coming soon!', 'info')}
+            className="flex-1 py-2 px-3 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             Compare
           </button>
         </div>

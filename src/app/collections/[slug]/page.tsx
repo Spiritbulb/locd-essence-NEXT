@@ -277,7 +277,7 @@ export default function CollectionDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
+      <div className="min-h-screen pt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="text-center">
@@ -292,7 +292,7 @@ export default function CollectionDetailPage() {
 
   if (error || !collection) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
+      <div className="min-h-screen pt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-red-200">
@@ -316,7 +316,7 @@ export default function CollectionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
+    <div className="min-h-screen pt-20">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Back Button */}
         <Link

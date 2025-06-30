@@ -258,7 +258,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
+      <div className="min-h-screen pt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="text-center">
@@ -273,7 +273,7 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
+      <div className="min-h-screen pt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex justify-center items-center min-h-[60vh]">
             <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-red-200">
@@ -301,7 +301,7 @@ export default function ProductDetailPage() {
   const maxQuantity = selectedVariant?.quantityAvailable || 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 pt-20">
+    <div className="min-h-screen pt-20">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Back Button */}
         <Link
@@ -533,7 +533,7 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
               <div className="flex items-center gap-3 text-sm text-gray-600">
                 <Truck className="w-5 h-5 text-[#8a6e5d]" />
-                <span>Free shipping over KES 5,000</span>
+                <span>Fast Shipping</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-600">
                 <Shield className="w-5 h-5 text-[#8a6e5d]" />

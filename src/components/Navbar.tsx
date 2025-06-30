@@ -663,17 +663,12 @@ const Navbar = ({ cartItemsCount = 0 }) => {
             )}
           </div>
         </div>
-
+            
+            
 
       </nav>
 
-      {/* Backdrop for auth dropdown */}
-      {isAuthOpen && (
-        <div
-          className="fixed inset-0 z-40 hidden lg:block"
-          onClick={closeMenus}
-        />
-      )}
+      
     </>
   );
 };

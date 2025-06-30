@@ -6,6 +6,7 @@ import Footer from '../components/Footer'
 import { CartProvider } from '../context/CartContext'
 import { AuthProvider } from '../context/AuthContext'
 import { FavoritesProvider } from '@/context/FavoritesContext'
+import { NotificationProvider } from '@/context/NotificationContext'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -30,9 +31,11 @@ export default function RootLayout({
           <CartProvider>
             <FavoritesProvider>
             <Navbar />
+            <NotificationProvider>
             <main className="w-full mx-auto py-8">
               {children}
             </main>
+            </NotificationProvider>
             <Footer />
             </FavoritesProvider>
           </CartProvider>
