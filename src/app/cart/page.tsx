@@ -2,99 +2,123 @@
 
 import { useEffect, useState } from 'react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import { Loader2, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Heart, Shield, Truck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
-  const { cartId, cartItems, loading, updateCartLine, removeFromCart, refreshCart } = useCart();
+  const { 
+    cartId, 
+    cartItems, 
+    loading, 
+    updateCartLine, 
+    removeFromCart, 
+    refreshCart,
+    itemLoadingStates,
+    updateCartBuyerIdentity 
+  } = useCart();
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [isUpdating, setIsUpdating] = useState<string | null>(null);
   const router = useRouter();
+  const {accessToken, customer} = useAuth();
+  const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
 
-  // Refresh cart on component mount to handle reload issues
+
+  // Refresh cart on component mount with proper dependencies
   useEffect(() => {
-    if (cartId && !loading) {
+    if (cartId && !loading && cartItems.length === 0) {
       refreshCart();
     }
-  }, [cartId, refreshCart]);
+  }, [cartId, loading, cartItems.length, refreshCart]);
 
   // Function to get cart with checkout URL
   const getCartCheckoutUrl = async () => {
-    if (!cartId) return;
+  if (!cartId) return;
 
-    try {
-      setIsRedirecting(true);
-      const response = await fetch('/api/shopify/storefront', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: `
-            query getCart($cartId: ID!) {
-              cart(id: $cartId) {
-                id
-                checkoutUrl
-                lines(first: 50) {
-                  edges {
-                    node {
-                      id
-                      quantity
-                      merchandise {
-                        ... on ProductVariant {
-                          id
+  try {
+    setIsRedirecting(true);
+    
+    // First ensure buyer identity is updated
+    if (accessToken && customer) {
+      await updateCartBuyerIdentity(cartId);
+    }
+
+    const response = await fetch('/api/shopify/storefront', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: `
+          query getCart($cartId: ID!) {
+            cart(id: $cartId) {
+              id
+              checkoutUrl
+              buyerIdentity {
+                email
+                customer {
+                  id
+                }
+              }
+              lines(first: 50) {
+                edges {
+                  node {
+                    id
+                    quantity
+                    merchandise {
+                      ... on ProductVariant {
+                        id
+                        title
+                        price {
+                          amount
+                        }
+                        image {
+                          url
+                        }
+                        product {
                           title
-                          price {
-                            amount
-                          }
-                          image {
-                            url
-                          }
-                          product {
-                            title
-                            handle
-                          }
+                          handle
                         }
                       }
                     }
                   }
                 }
-                cost {
-                  totalAmount {
-                    amount
-                    currencyCode
-                  }
-                  subtotalAmount {
-                    amount
-                    currencyCode
-                  }
+              }
+              cost {
+                totalAmount {
+                  amount
+                  currencyCode
+                }
+                subtotalAmount {
+                  amount
+                  currencyCode
                 }
               }
             }
-          `,
-          variables: {
-            cartId
           }
-        })
-      });
+        `,
+        variables: {
+          cartId
+        }
+      })
+    });
 
-      const { data, errors } = await response.json();
+    const { data, errors } = await response.json();
 
-      if (errors) {
-        throw new Error(errors[0]?.message || 'Failed to get cart');
-      }
-
-      if (data.cart?.checkoutUrl) {
-        setCheckoutUrl(data.cart.checkoutUrl);
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-    } finally {
-      setIsRedirecting(false);
+    if (errors) {
+      throw new Error(errors[0]?.message || 'Failed to get cart');
     }
-  };
+
+    if (data.cart?.checkoutUrl) {
+      setCheckoutUrl(data.cart.checkoutUrl);
+    }
+  } catch (error) {
+    console.error('Checkout error:', error);
+  } finally {
+    setIsRedirecting(false);
+  }
+};
 
   // Handle quantity updates
   const handleQuantityUpdate = async (lineId: string, newQuantity: number) => {
@@ -102,27 +126,12 @@ export default function CartPage() {
       handleRemoveItem(lineId);
       return;
     }
-
-    setIsUpdating(lineId);
-    try {
-      await updateCartLine(lineId, newQuantity);
-    } catch (error) {
-      console.error('Failed to update quantity:', error);
-    } finally {
-      setIsUpdating(null);
-    }
+    await updateCartLine(lineId, newQuantity);
   };
 
   // Handle item removal
   const handleRemoveItem = async (lineId: string) => {
-    setIsUpdating(lineId);
-    try {
-      await removeFromCart(lineId);
-    } catch (error) {
-      console.error('Failed to remove item:', error);
-    } finally {
-      setIsUpdating(null);
-    }
+    await removeFromCart(lineId);
   };
 
   // Redirect to checkout when URL is available
@@ -150,7 +159,7 @@ export default function CartPage() {
               <p className="text-gray-600 font-medium">Loading your cart...</p>
             </div>
           </div>
-        ) : cartItems.length === 0 ? (
+        ) : safeCartItems.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-50 rounded-full border-2 border-amber-700 p-3 flex items-center justify-center mx-auto mb-3 shadow-inner">
               <ShoppingBag className="w-12 h-12 text-amber-700" />
@@ -170,7 +179,6 @@ export default function CartPage() {
               <button
                 onClick={() => router.push('/favourites')}
                 className="px-8 py-4 bg-white border-2 border-[#8a6e5d]/20 text-[#8a6e5d] rounded-2xl font-medium hover:bg-[#8a6e5d]/5 hover:border-[#8a6e5d]/30 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2"
-
               >
                 <Heart className="w-5 h-5" />
                 View Wishlist
@@ -185,7 +193,7 @@ export default function CartPage() {
                 <div className="p-6 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900">
-                      Cart Items ({cartItems.length})
+                      Cart Items ({safeCartItems.length})
                     </h2>
                     <div className="flex items-center gap-3 text-sm text-gray-500">
                       <Shield className="w-4 h-4" />
@@ -195,7 +203,7 @@ export default function CartPage() {
                 </div>
 
                 <div className="divide-y divide-gray-100">
-                  {cartItems.map((item, index) => (
+                  {safeCartItems.map((item) => (
                     <div key={item.id} className="p-6 group hover:bg-gray-50/50 transition-all duration-300">
                       <div className="flex gap-6">
                         {/* Product Image */}
@@ -209,10 +217,10 @@ export default function CartPage() {
                           </div>
                           <button
                             onClick={() => handleRemoveItem(item.id)}
-                            disabled={isUpdating === item.id}
+                            disabled={itemLoadingStates[item.id]}
                             className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 disabled:opacity-50"
                           >
-                            {isUpdating === item.id ? (
+                            {itemLoadingStates[item.id] ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
                               <Trash2 className="w-4 h-4" />
@@ -242,7 +250,7 @@ export default function CartPage() {
                             <div className="flex items-center gap-1">
                               <button
                                 onClick={() => handleQuantityUpdate(item.id, item.quantity - 1)}
-                                disabled={isUpdating === item.id || item.quantity <= 1}
+                                disabled={itemLoadingStates[item.id] || item.quantity <= 1}
                                 className="w-10 h-10 flex items-center justify-center border-2 border-gray-200 rounded-xl hover:border-[#8a6e5d]/30 hover:bg-[#8a6e5d]/5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <Minus className="w-4 h-4 text-gray-600" />
@@ -252,10 +260,10 @@ export default function CartPage() {
                               </div>
                               <button
                                 onClick={() => handleQuantityUpdate(item.id, item.quantity + 1)}
-                                disabled={isUpdating === item.id}
+                                disabled={itemLoadingStates[item.id]}
                                 className="w-10 h-10 flex items-center justify-center border-2 border-gray-200 rounded-xl hover:border-[#8a6e5d]/30 hover:bg-[#8a6e5d]/5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                {isUpdating === item.id ? (
+                                {itemLoadingStates[item.id] ? (
                                   <Loader2 className="w-4 h-4 animate-spin text-[#8a6e5d]" />
                                 ) : (
                                   <Plus className="w-4 h-4 text-gray-600" />
@@ -301,8 +309,6 @@ export default function CartPage() {
                         <span className="text-gray-600">Estimated Tax</span>
                         <span className="font-semibold text-black">KSh{estimatedTax.toFixed(2)}</span>
                       </div>
-
-
 
                       <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                         <span className="text-lg font-bold text-gray-900">Total</span>

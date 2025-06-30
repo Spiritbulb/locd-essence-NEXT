@@ -31,6 +31,7 @@ export default function RootLayout({
           <CartProvider>
             <FavoritesProvider>
               <NotificationProvider>
+                
                 <Navbar />
                 <main className="w-full mx-auto py-8">
                   {children}
@@ -39,7 +40,7 @@ export default function RootLayout({
               </NotificationProvider>
             </FavoritesProvider>
           </CartProvider>
-        </AuthProvider>
+       </AuthProvider>
       </body>
     </html>
   )
