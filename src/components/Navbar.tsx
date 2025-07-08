@@ -23,28 +23,7 @@ const Navbar = ({ cartItemsCount = 0 }) => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const { customer, loginWithPassword, createCustomer, recoverCustomerAccount, logout, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
 
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Update isScrolled based on scroll position
-      setIsScrolled(currentScrollY > 10);
-
-      // Show/hide navbar based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 40) {
-        setIsVisible(false); // scrolling down
-      } else {
-        setIsVisible(true); // scrolling up
-      }
-
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
 
   const closeMenus = () => {
@@ -663,9 +642,6 @@ const Navbar = ({ cartItemsCount = 0 }) => {
             )}
           </div>
         </div>
-            
-            
-
       </nav>
 
       
